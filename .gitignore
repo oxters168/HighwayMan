@@ -70,3 +70,6 @@ Assets/Imported/MeshCombineStudio/*
 
 Assets/TextMesh Pro/*
 !Assets/TextMesh Pro/.gitkeep
+
+Assets/VehiclePhysics/*
+!Assets/VehiclePhysics/.gitkeep

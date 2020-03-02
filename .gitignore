@@ -67,3 +67,6 @@ Assets/Imported/AkilliMum/*
 
 Assets/Imported/MeshCombineStudio/*
 !Assets/Imported/MeshCombineStudio/.gitkeep
+
+Assets/TextMesh Pro/*
+!Assets/TextMesh Pro/.gitkeep

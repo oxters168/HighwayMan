@@ -1623,11 +1623,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 89114528421680640, guid: 8fecde0364096544c8bdf01d54908c35,
-        type: 3}
-      propertyPath: speedGauge
-      value: 
-      objectReference: {fileID: 1555290230}
     - target: {fileID: 4884247692287120319, guid: 8fecde0364096544c8bdf01d54908c35,
         type: 3}
       propertyPath: m_Name

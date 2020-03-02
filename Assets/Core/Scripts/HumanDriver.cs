@@ -1,9 +1,10 @@
 ﻿using Rewired;
 using UnityEngine;
+using UnityHelpers;
 
 public class HumanDriver : MonoBehaviour
 {
-    public VehiclePhysics vehicle;
+    public CarPhysics vehicle;
     public int playerId;
     private Player player;
 

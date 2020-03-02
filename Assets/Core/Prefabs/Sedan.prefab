@@ -2232,19 +2232,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c892462238a37e44bee0fa2dbf0a256, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedGauge: {fileID: 0}
-  physics: {fileID: 782946125281716913}
+  vehicleRigidbody: {fileID: 782946125281716913}
   wheelFL: {fileID: 5453481520554959338}
   wheelFR: {fileID: 2395298753344468210}
-  wheelRL: {fileID: 4947721905955771557}
-  wheelRR: {fileID: 1331837764627621035}
-  acceleration: 3.4
-  deceleration: 1.2
-  brakeleration: 20
-  maxForwardSpeed: 57.2
-  maxReverseSpeed: 28.6
-  maxWheelAngle: 33.33
-  strivedSpeed: 0
+  wheelRL: {fileID: 9091465457702431750}
+  wheelRR: {fileID: 2309633309664514906}
+  wheelGroundDistance: 1
+  vehicleStats: {fileID: 11400000, guid: a8cac4e1b20479d4098fe184b17e8ec2, type: 2}
   gas: 0
   brake: 0
   steer: 0

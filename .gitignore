@@ -73,3 +73,6 @@ Assets/TextMesh Pro/*
 
 Assets/VehiclePhysics/*
 !Assets/VehiclePhysics/.gitkeep
+
+Assets/Rewired/*
+!Assets/Rewired/.gitkeep

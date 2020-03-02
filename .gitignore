@@ -59,3 +59,11 @@ sysinfo.txt
 crashlytics-build.properties
 
 # Imported
+Assets/Imported/PolygonCity/*
+!Assets/Imported/PolygonCity/.gitkeep
+
+Assets/Imported/AkilliMum/*
+!Assets/Imported/AkilliMum/.gitkeep
+
+Assets/Imported/MeshCombineStudio/*
+!Assets/Imported/MeshCombineStudio/.gitkeep

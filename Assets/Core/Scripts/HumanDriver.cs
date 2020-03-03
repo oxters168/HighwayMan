@@ -1,10 +1,13 @@
 ﻿using Rewired;
+using TMPro;
 using UnityEngine;
 using UnityHelpers;
 
 public class HumanDriver : MonoBehaviour
 {
-    public CarPhysics vehicle;
+    public OrbitCameraController followCamera;
+    public TextMeshProUGUI speedGauge;
+    public VehicleSwitcher vehicles;
     public int playerId;
     private Player player;
 
@@ -14,8 +17,13 @@ public class HumanDriver : MonoBehaviour
     }
     void Update()
     {
-        vehicle.gas = player.GetAxis("Gas");
-        vehicle.brake = player.GetAxis("Brake");
-        vehicle.steer = player.GetAxis("Steer");
+        if (vehicles.currentVehicle != null)
+        {
+            followCamera.target = vehicles.currentVehicle.transform;
+            vehicles.currentVehicle.gas = player.GetAxis("Gas");
+            vehicles.currentVehicle.brake = player.GetAxis("Brake");
+            vehicles.currentVehicle.steer = player.GetAxis("Steer");
+            speedGauge.text = vehicles.currentVehicle.currentSpeed.ToString();
+        }
     }
 }

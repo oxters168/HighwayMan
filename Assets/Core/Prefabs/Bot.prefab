@@ -92,8 +92,13 @@ MonoBehaviour:
   sideDistanceObstacleCheck: 1
   defaultTargetIndex: 0
   targetSwitchTime: 3
-  targetSwitchPercent: 0.02
+  targetSwitchPercent: 0.2
+  maxAngle: 3
+  minAngle: 1
+  maxSteer: 0.1
+  minDistance: 0.5
   targets: []
+  currentTargetIndex: 0
 --- !u!114 &2472410463131429466
 MonoBehaviour:
   m_ObjectHideFlags: 0

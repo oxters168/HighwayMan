@@ -24,12 +24,22 @@ public class BotDriver : MonoBehaviour
     [Tooltip("In seconds")]
     public float targetSwitchTime = 3;
     [Tooltip("Every targetSwitchTime seconds, this is the percent chance the bot will switch targets.")]
-    public float targetSwitchPercent = 0.02f;
+    public float targetSwitchPercent = 0.2f;
+    [Tooltip("Max difference in degrees from target")]
+    public float maxAngle = 5;
+    [Tooltip("Min difference in degrees from forward")]
+    public float minAngle = 0.1f;
+    [Range(0, 1), Tooltip("The max value to give to steer in CarPhysics")]
+    public float maxSteer = 0.2f;
+    [Tooltip("The dead zone")]
+    public float minDistance = 0.1f;
+    [Tooltip("The distance between the lanes in meters")]
+    public float laneDistance = 5;
     private float lastTargetSwitchTime;
 
 
     public Transform[] targets;
-    private int currentTargetIndex;
+    public int currentTargetIndex;
 
     private bool spawnedFromRear;
 
@@ -67,9 +77,23 @@ public class BotDriver : MonoBehaviour
     private void Drive(CarPhysics currentVehicle)
     {
         //Calculate steer value to reach target
-        float nextSteer;
-        float targetAngle = currentVehicle.transform.position.SignedAngle(targets[currentTargetIndex].position, currentVehicle.transform.forward, currentVehicle.transform.up);
-        nextSteer = Mathf.Clamp(targetAngle / currentVehicle.vehicleStats.maxWheelAngle, -1, 1);
+        float nextSteer = 0;
+        Vector3 vehicleFrontPoint = currentVehicle.GetPointOnBoundsBorder(0, -0.5f, 0.9f);
+        Vector3 hypotenuse = targets[currentTargetIndex].position - vehicleFrontPoint;
+        float targetAngle = Vector3.SignedAngle(hypotenuse.normalized, targets[currentTargetIndex].forward, currentVehicle.transform.up);
+        float vehicleAngle = -Vector3.SignedAngle(currentVehicle.transform.forward, hypotenuse.normalized, currentVehicle.transform.up);
+        Debug.Log(vehicleAngle.ToString());
+        float oppSide = -Mathf.Sin(targetAngle * Mathf.Deg2Rad) * hypotenuse.magnitude;
+        Debug.DrawRay(vehicleFrontPoint, hypotenuse, Color.yellow);
+        Debug.DrawRay(vehicleFrontPoint, currentVehicle.transform.right * oppSide, Color.yellow);
+        if (Mathf.Abs(oppSide) >= minDistance && (Mathf.Abs(vehicleAngle) < maxAngle || Mathf.Sign(vehicleAngle) != Mathf.Sign(oppSide)))
+        {
+            nextSteer = Mathf.Clamp(oppSide / laneDistance, -1, 1) * maxSteer;
+        }
+        else if (Mathf.Abs(vehicleAngle) >= maxAngle)
+            nextSteer = maxSteer * -Mathf.Sign(vehicleAngle);
+        else if (Mathf.Abs(oppSide) < minDistance && Mathf.Abs(vehicleAngle) > minAngle)
+            nextSteer = maxSteer * -Mathf.Sign(vehicleAngle) / 8;
 
         //Calculating gas value to conform to set speed
         float nextGas = currentVehicle.currentSpeed < spawnSpeed ? 1 : 0;
@@ -83,28 +107,28 @@ public class BotDriver : MonoBehaviour
         Vector3 vehicleLeftRayStart = currentVehicle.GetPointOnBoundsBorder(-1, -0.5f, 0);
         Vector3 vehicleRightRayStart = currentVehicle.GetPointOnBoundsBorder(1, -0.5f, 0);
 
-        Vector3 vehicleForwardRightDirection = (vehicleForwardRightRayStart - vehicleLowerCenter).normalized;
-        Vector3 vehicleForwardLeftDirection = (vehicleForwardLeftRayStart - vehicleLowerCenter).normalized;
+        Vector3 vehicleForwardRightDirection = currentVehicle.transform.forward;
+        Vector3 vehicleForwardLeftDirection = currentVehicle.transform.forward;
+        //Vector3 vehicleForwardRightDirection = (vehicleForwardRightRayStart - vehicleLowerCenter).normalized;
+        //Vector3 vehicleForwardLeftDirection = (vehicleForwardLeftRayStart - vehicleLowerCenter).normalized;
 
-        //Draw rays around vehicle
-        Debug.DrawRay(vehicleForwardRayStart, currentVehicle.transform.forward * forwardDistanceObstacleCheck, Color.blue);
-        Debug.DrawRay(vehicleForwardRightRayStart, vehicleForwardRightDirection * forwardDistanceObstacleCheck, Color.blue);
-        Debug.DrawRay(vehicleForwardLeftRayStart, vehicleForwardLeftDirection * forwardDistanceObstacleCheck, Color.blue);
-        Debug.DrawRay(vehicleLeftRayStart, -currentVehicle.transform.right * sideDistanceObstacleCheck, Color.red);
-        Debug.DrawRay(vehicleRightRayStart, currentVehicle.transform.right * sideDistanceObstacleCheck, Color.red);
-
+        //Cast rays around vehicle
         RaycastHit forwardHitInfo, forwardLeftHitInfo, forwardRightHitInfo, leftHitInfo, rightHitInfo;
         bool forwardHit = Physics.Raycast(vehicleForwardRayStart, currentVehicle.transform.forward, out forwardHitInfo, forwardDistanceObstacleCheck);
-        bool forwardLeftHit = Physics.Raycast(vehicleForwardLeftRayStart, vehicleForwardLeftDirection, out forwardLeftHitInfo, forwardDistanceObstacleCheck * 0.5f);
-        bool forwardRightHit = Physics.Raycast(vehicleForwardRightRayStart, vehicleForwardRightDirection, out forwardRightHitInfo, forwardDistanceObstacleCheck * 0.5f);
+        bool forwardLeftHit = Physics.Raycast(vehicleForwardLeftRayStart, vehicleForwardLeftDirection, out forwardLeftHitInfo, forwardDistanceObstacleCheck);
+        bool forwardRightHit = Physics.Raycast(vehicleForwardRightRayStart, vehicleForwardRightDirection, out forwardRightHitInfo, forwardDistanceObstacleCheck);
         bool leftHit = Physics.Raycast(vehicleLeftRayStart, -currentVehicle.transform.right, out leftHitInfo, sideDistanceObstacleCheck);
         bool rightHit = Physics.Raycast(vehicleRightRayStart, currentVehicle.transform.right, out rightHitInfo, sideDistanceObstacleCheck);
         if (forwardHit || forwardLeftHit || forwardRightHit || leftHit || rightHit)
         {
             //Distance from obstacle to gas percent
             if (forwardHit || forwardLeftHit || forwardRightHit)
-                nextGas = -1;
+            {
+                float distanceToObstacle = Mathf.Min(forwardHit ? forwardHitInfo.distance : float.MaxValue, forwardLeftHit ? forwardLeftHitInfo.distance : float.MaxValue, forwardRightHit ? forwardRightHitInfo.distance : float.MaxValue);
+                float predictedDistanceTravel = currentVehicle.currentSpeed * Time.fixedDeltaTime;
+                nextGas = -(1 - Mathf.Clamp01(predictedDistanceTravel / distanceToObstacle));
                 //nextGas = -(1 - forwardHitInfo.distance / forwardDistanceObstacleCheck);
+            }
 
             //Steer from obstacle
             if (forwardHit || forwardLeftHit || forwardRightHit)
@@ -128,6 +152,13 @@ public class BotDriver : MonoBehaviour
                 nextSteer = -1;
         }
 
+        //Draw rays around vehicle
+        Debug.DrawRay(vehicleForwardRayStart, currentVehicle.transform.forward * forwardDistanceObstacleCheck, forwardHit ? Color.green : Color.red);
+        Debug.DrawRay(vehicleForwardRightRayStart, vehicleForwardRightDirection * forwardDistanceObstacleCheck, forwardRightHit ? Color.green : Color.red);
+        Debug.DrawRay(vehicleForwardLeftRayStart, vehicleForwardLeftDirection * forwardDistanceObstacleCheck, forwardLeftHit ? Color.green : Color.red);
+        Debug.DrawRay(vehicleLeftRayStart, -currentVehicle.transform.right * sideDistanceObstacleCheck, leftHit ? Color.green : Color.red);
+        Debug.DrawRay(vehicleRightRayStart, currentVehicle.transform.right * sideDistanceObstacleCheck, rightHit ? Color.green : Color.red);
+
         //Apply values to car
         currentVehicle.gas = nextGas;
         currentVehicle.steer = nextSteer;
@@ -136,9 +167,11 @@ public class BotDriver : MonoBehaviour
     {
         if (Time.time - lastTargetSwitchTime >= targetSwitchTime)
         {
-            float rng = Random.Range(0, 1);
+            float rng = Random.Range(0, 1f);
             if (rng <= targetSwitchPercent)
                 currentTargetIndex = Random.Range(0, targets.Length);
+
+            lastTargetSwitchTime = Time.time;
         }
     }
 

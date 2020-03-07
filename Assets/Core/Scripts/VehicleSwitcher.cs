@@ -24,12 +24,12 @@ public class VehicleSwitcher : MonoBehaviour
             {
                 prevVehicle = allVehicles[prevIndex];
                 if (prevVehicle != null)
-                    prevVehicle.gameObject.SetActive(false);
+                    prevVehicle.SetVisible(false);
             }
 
             currentVehicle = allVehicles[index];
             currentVehicle.Match(prevVehicle);
-            currentVehicle.gameObject.SetActive(true);
+            currentVehicle.SetVisible(true);
         }
         prevIndex = index;
     }

@@ -1370,7 +1370,6 @@ GameObject:
   - component: {fileID: 2980848171194711819}
   - component: {fileID: 3006772503668798785}
   - component: {fileID: 848667354237753823}
-  - component: {fileID: 2858589398469373100}
   m_Layer: 0
   m_Name: PoliceCrownVic
   m_TagString: Untagged
@@ -1509,40 +1508,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   centerOfMassOffset: {x: 0, y: -0.5, z: 0}
   showCOM: 1
---- !u!114 &2858589398469373100
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2980848171192677101}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62180964e16659648adeb7dcb84cfd8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  debugMessages: 0
-  onCollided:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerStay:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionStay:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionExit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &3004588396711225118
 GameObject:
   m_ObjectHideFlags: 0

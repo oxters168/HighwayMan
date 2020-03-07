@@ -1,39 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &506334396
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1632129065584717562}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62180964e16659648adeb7dcb84cfd8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  debugMessages: 0
-  onCollided:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerStay:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionStay:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionExit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &3936228194404712906
 GameObject:
   m_ObjectHideFlags: 0
@@ -45,7 +11,6 @@ GameObject:
   - component: {fileID: 2674681143217946250}
   - component: {fileID: 1166930858805102131}
   - component: {fileID: 2472410463131429466}
-  - component: {fileID: 1412029843}
   m_Layer: 0
   m_Name: Bot
   m_TagString: Untagged
@@ -83,13 +48,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vehicles: {fileID: 2472410463131429466}
-  treeCollider: {fileID: 1412029843}
+  treeCollider: {fileID: 0}
   keepUpWith: {fileID: 0}
   speedLimit: 27.78
   frontSpawn: {fileID: 0}
   rearSpawn: {fileID: 0}
-  forwardDistanceObstacleCheck: 10
-  sideDistanceObstacleCheck: 1
   defaultTargetIndex: 0
   targetSwitchTime: 3
   targetSwitchPercent: 0.2
@@ -97,6 +60,7 @@ MonoBehaviour:
   minAngle: 1
   maxSteer: 0.1
   minDistance: 0.5
+  laneDistance: 5
   targets: []
   currentTargetIndex: 0
 --- !u!114 &2472410463131429466
@@ -116,74 +80,6 @@ MonoBehaviour:
   - {fileID: 624669046765363976}
   - {fileID: 7315310642043635229}
   index: 0
---- !u!114 &1412029843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3936228194404712906}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62180964e16659648adeb7dcb84cfd8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  debugMessages: 0
-  onCollided:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerStay:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionStay:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionExit:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &1334933065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5359153147632461495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62180964e16659648adeb7dcb84cfd8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  debugMessages: 0
-  onCollided:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerStay:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionStay:
-    m_PersistentCalls:
-      m_Calls: []
-  onCollisionExit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1001 &691262965621929224
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -263,12 +159,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8fecde0364096544c8bdf01d54908c35, type: 3}
---- !u!1 &5359153147632461495 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4884247692287120319, guid: 8fecde0364096544c8bdf01d54908c35,
-    type: 3}
-  m_PrefabInstance: {fileID: 691262965621929224}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5359153147632170581 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4884247692287345501, guid: 8fecde0364096544c8bdf01d54908c35,
@@ -281,7 +171,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 691262965621929224}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5359153147632461495}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3c892462238a37e44bee0fa2dbf0a256, type: 3}
@@ -366,12 +256,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5cb9c7cbc2e142b4b91894d975ca6021, type: 3}
---- !u!1 &1632129065584717562 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2055582746002190595, guid: 5cb9c7cbc2e142b4b91894d975ca6021,
-    type: 3}
-  m_PrefabInstance: {fileID: 729751506783674361}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1632129065584509126 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2055582746002382655, guid: 5cb9c7cbc2e142b4b91894d975ca6021,
@@ -384,7 +268,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 729751506783674361}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1632129065584717562}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3c892462238a37e44bee0fa2dbf0a256, type: 3}
@@ -400,7 +284,7 @@ PrefabInstance:
     - target: {fileID: 2980848171192399491, guid: 623928aa8ec3c8d449d84bb51e46bccd,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2980848171192399491, guid: 623928aa8ec3c8d449d84bb51e46bccd,
         type: 3}
@@ -462,7 +346,8 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2858589398469373100, guid: 623928aa8ec3c8d449d84bb51e46bccd, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 623928aa8ec3c8d449d84bb51e46bccd, type: 3}
 --- !u!4 &1595169667236631619 stripped
 Transform:

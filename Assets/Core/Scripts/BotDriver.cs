@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UnityHelpers;
 
-public class BotDriver : MonoBehaviour
+public class BotDriver : MonoBehaviour, AbstractDriver
 {
     public VehicleSwitcher vehicles;
-    public TreeCollider treeCollider;
-    public HumanDriver keepUpWith;
+    [Tooltip("Has to implement the interface AbstractDriver")]
+    public GameObject keepUpWithObject;
+    private AbstractDriver keepUpWith;
 
     [Space(10), Tooltip("In m/s")]
     public float speedLimit = 27.78f;
@@ -13,11 +14,6 @@ public class BotDriver : MonoBehaviour
     [Space(10)]
     public Transform frontSpawn;
     public Transform rearSpawn;
-
-    [Space(10), Tooltip("In meters")]
-    public float forwardDistanceObstacleCheck = 10;
-    [Tooltip("In meters")]
-    public float sideDistanceObstacleCheck = 2;
 
     [Space(10), Tooltip("The default target when respawned")]
     public int defaultTargetIndex;
@@ -41,17 +37,18 @@ public class BotDriver : MonoBehaviour
     public Transform[] targets;
     public int currentTargetIndex;
 
-    private bool spawnedFromRear;
+    //private bool spawnedFromRear;
 
     private float spawnSpeed;
 
     private void Awake()
     {
-        treeCollider.onTriggerEnter.AddListener(OnTreeTriggerEnter);
+        //treeCollider.onTriggerEnter.AddListener(OnTreeTriggerEnter);
     }
     private void Start()
     {
         RespawnRandom();
+        keepUpWith = keepUpWithObject.GetComponent<AbstractDriver>();
     }
     private void Update()
     {
@@ -63,11 +60,11 @@ public class BotDriver : MonoBehaviour
             TrySwitchTarget();
         }
     }
-    private void OnTreeTriggerEnter(TreeCollider.CollisionInfo colInfo)
-    {
-        if (!spawnedFromRear && colInfo.collidedWith.CompareTag("Rear") || spawnedFromRear && colInfo.collidedWith.CompareTag("Front"))
-            RespawnRandom();
-    }
+    //private void OnTreeTriggerEnter(TreeCollider.CollisionInfo colInfo)
+    //{
+    //    if (!spawnedFromRear && colInfo.collidedWith.CompareTag("Rear") || spawnedFromRear && colInfo.collidedWith.CompareTag("Front"))
+    //        RespawnRandom();
+    //}
 
     private void RespawnCheck(CarPhysics currentVehicle)
     {
@@ -82,7 +79,7 @@ public class BotDriver : MonoBehaviour
         Vector3 hypotenuse = targets[currentTargetIndex].position - vehicleFrontPoint;
         float targetAngle = Vector3.SignedAngle(hypotenuse.normalized, targets[currentTargetIndex].forward, currentVehicle.transform.up);
         float vehicleAngle = -Vector3.SignedAngle(currentVehicle.transform.forward, hypotenuse.normalized, currentVehicle.transform.up);
-        Debug.Log(vehicleAngle.ToString());
+        //Debug.Log(vehicleAngle.ToString());
         float oppSide = -Mathf.Sin(targetAngle * Mathf.Deg2Rad) * hypotenuse.magnitude;
         Debug.DrawRay(vehicleFrontPoint, hypotenuse, Color.yellow);
         Debug.DrawRay(vehicleFrontPoint, currentVehicle.transform.right * oppSide, Color.yellow);
@@ -98,66 +95,34 @@ public class BotDriver : MonoBehaviour
         //Calculating gas value to conform to set speed
         float nextGas = currentVehicle.currentSpeed < spawnSpeed ? 1 : 0;
 
-        //Get obstacle ray start points
-        Vector3 vehicleLowerCenter = currentVehicle.GetPointOnBoundsBorder(0, -0.5f, 0);
-
-        Vector3 vehicleForwardRayStart = currentVehicle.GetPointOnBoundsBorder(0, -0.5f, 0.9f);
-        Vector3 vehicleForwardRightRayStart = currentVehicle.GetPointOnBoundsBorder(0.5f, -0.5f, 0.9f);
-        Vector3 vehicleForwardLeftRayStart = currentVehicle.GetPointOnBoundsBorder(-0.5f, -0.5f, 0.9f);
-        Vector3 vehicleLeftRayStart = currentVehicle.GetPointOnBoundsBorder(-1, -0.5f, 0);
-        Vector3 vehicleRightRayStart = currentVehicle.GetPointOnBoundsBorder(1, -0.5f, 0);
-
-        Vector3 vehicleForwardRightDirection = currentVehicle.transform.forward;
-        Vector3 vehicleForwardLeftDirection = currentVehicle.transform.forward;
-        //Vector3 vehicleForwardRightDirection = (vehicleForwardRightRayStart - vehicleLowerCenter).normalized;
-        //Vector3 vehicleForwardLeftDirection = (vehicleForwardLeftRayStart - vehicleLowerCenter).normalized;
-
-        //Cast rays around vehicle
-        RaycastHit forwardHitInfo, forwardLeftHitInfo, forwardRightHitInfo, leftHitInfo, rightHitInfo;
-        bool forwardHit = Physics.Raycast(vehicleForwardRayStart, currentVehicle.transform.forward, out forwardHitInfo, forwardDistanceObstacleCheck);
-        bool forwardLeftHit = Physics.Raycast(vehicleForwardLeftRayStart, vehicleForwardLeftDirection, out forwardLeftHitInfo, forwardDistanceObstacleCheck);
-        bool forwardRightHit = Physics.Raycast(vehicleForwardRightRayStart, vehicleForwardRightDirection, out forwardRightHitInfo, forwardDistanceObstacleCheck);
-        bool leftHit = Physics.Raycast(vehicleLeftRayStart, -currentVehicle.transform.right, out leftHitInfo, sideDistanceObstacleCheck);
-        bool rightHit = Physics.Raycast(vehicleRightRayStart, currentVehicle.transform.right, out rightHitInfo, sideDistanceObstacleCheck);
-        if (forwardHit || forwardLeftHit || forwardRightHit || leftHit || rightHit)
+        var forwardHitInfo = currentVehicle.GetForwardHitInfo();
+        var leftHitInfo = currentVehicle.GetLeftHitInfo();
+        var rightHitInfo = currentVehicle.GetRightHitInfo();
+        if (forwardHitInfo.hit || leftHitInfo.hit || rightHitInfo.hit)
         {
             //Distance from obstacle to gas percent
-            if (forwardHit || forwardLeftHit || forwardRightHit)
+            if (forwardHitInfo.hit)
             {
-                float distanceToObstacle = Mathf.Min(forwardHit ? forwardHitInfo.distance : float.MaxValue, forwardLeftHit ? forwardLeftHitInfo.distance : float.MaxValue, forwardRightHit ? forwardRightHitInfo.distance : float.MaxValue);
+                float distanceToObstacle = forwardHitInfo.info.distance;
                 float predictedDistanceTravel = currentVehicle.currentSpeed * Time.fixedDeltaTime;
                 nextGas = -(1 - Mathf.Clamp01(predictedDistanceTravel / distanceToObstacle));
                 //nextGas = -(1 - forwardHitInfo.distance / forwardDistanceObstacleCheck);
             }
 
             //Steer from obstacle
-            if (forwardHit || forwardLeftHit || forwardRightHit)
+            if (forwardHitInfo.hit)
             {
-                if (forwardLeftHit && currentVehicle.currentSpeed > 0 || forwardRightHit && currentVehicle.currentSpeed < 0)
-                    nextSteer = 1;
-                else if (forwardRightHit && currentVehicle.currentSpeed > 0 || forwardLeftHit && currentVehicle.currentSpeed < 0)
+                float obstacleAngle = currentVehicle.GetHitAngle(forwardHitInfo);
+                if (obstacleAngle > 0 && currentVehicle.currentSpeed > 0 || obstacleAngle < 0 && currentVehicle.currentSpeed < 0)
                     nextSteer = -1;
                 else
-                {
-                    float obstacleAngle = currentVehicle.transform.position.SignedAngle(forwardHitInfo.point, currentVehicle.transform.forward, currentVehicle.transform.up);
-                    if (obstacleAngle > 0 && currentVehicle.currentSpeed > 0 || obstacleAngle < 0 && currentVehicle.currentSpeed < 0)
-                        nextSteer = -1;
-                    else
-                        nextSteer = 1;
-                }
+                    nextSteer = 1;
             }
-            else if (leftHit && currentVehicle.currentSpeed > 0 || rightHit && currentVehicle.currentSpeed < 0)
+            else if (leftHitInfo.hit && currentVehicle.currentSpeed > 0 || rightHitInfo.hit && currentVehicle.currentSpeed < 0)
                 nextSteer = 1;
-            else if (rightHit && currentVehicle.currentSpeed > 0 || leftHit && currentVehicle.currentSpeed < 0)
+            else if (rightHitInfo.hit && currentVehicle.currentSpeed > 0 || leftHitInfo.hit && currentVehicle.currentSpeed < 0)
                 nextSteer = -1;
         }
-
-        //Draw rays around vehicle
-        Debug.DrawRay(vehicleForwardRayStart, currentVehicle.transform.forward * forwardDistanceObstacleCheck, forwardHit ? Color.green : Color.red);
-        Debug.DrawRay(vehicleForwardRightRayStart, vehicleForwardRightDirection * forwardDistanceObstacleCheck, forwardRightHit ? Color.green : Color.red);
-        Debug.DrawRay(vehicleForwardLeftRayStart, vehicleForwardLeftDirection * forwardDistanceObstacleCheck, forwardLeftHit ? Color.green : Color.red);
-        Debug.DrawRay(vehicleLeftRayStart, -currentVehicle.transform.right * sideDistanceObstacleCheck, leftHit ? Color.green : Color.red);
-        Debug.DrawRay(vehicleRightRayStart, currentVehicle.transform.right * sideDistanceObstacleCheck, rightHit ? Color.green : Color.red);
 
         //Apply values to car
         currentVehicle.gas = nextGas;
@@ -184,21 +149,28 @@ public class BotDriver : MonoBehaviour
         currentTargetIndex = defaultTargetIndex;
 
         vehicles.SetVehicle(Mathf.Clamp(vehicleIndex, 0, vehicles.allVehicles.Length));
+        vehicles.currentVehicle.castRays = true;
 
         spawnSpeed = Random.Range(speedLimit - 5, speedLimit + 5);
 
-        spawnedFromRear = true;
+        //spawnedFromRear = true;
         Transform spawnFrom = rearSpawn;
-        if (keepUpWith.vehicles.currentVehicle != null)
+        var followVehicle = keepUpWith?.GetVehicle();
+        if (followVehicle != null)
         {
-            float keepUpDirection = Vector3.Dot(keepUpWith.vehicles.currentVehicle.transform.forward, Vector3.forward);
-            float keepUpSpeed = keepUpWith.vehicles.currentVehicle.currentSpeed;
+            float keepUpDirection = Vector3.Dot(followVehicle.transform.forward, Vector3.forward);
+            float keepUpSpeed = followVehicle.currentSpeed;
             if ((keepUpDirection < 0 && keepUpSpeed > 0) || keepUpDirection > 0 && (keepUpSpeed < 0 || spawnSpeed < keepUpSpeed))
             {
                 spawnFrom = frontSpawn;
-                spawnedFromRear = false;
+                //spawnedFromRear = false;
             }
         }
         vehicles.currentVehicle.Teleport(spawnFrom.position, spawnFrom.rotation, spawnSpeed);
+    }
+
+    public CarPhysics GetVehicle()
+    {
+        return vehicles.currentVehicle;
     }
 }

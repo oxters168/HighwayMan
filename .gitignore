@@ -76,3 +76,6 @@ Assets/VehiclePhysics/*
 
 Assets/Rewired/*
 !Assets/Rewired/.gitkeep
+
+Assets/ML-Agents/*
+!Assets/ML-Agents/.gitkeep

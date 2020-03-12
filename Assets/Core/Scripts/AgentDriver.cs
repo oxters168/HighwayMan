@@ -6,33 +6,34 @@ public class AgentDriver : Agent, AbstractDriver
 {
     public VehicleSwitcher vehicles;
 
-    public Vector3 spawnCenter, spawnSize;
+    public Vector3 vehicleSpawnCenter, vehicleSpawnSize;
 
     [Tooltip("Setting this value to anything not within the vehicles array will reset agent each time to random vehicle")]
     public int vehicleIndex = -1;
     private int currentVehicleIndex;
 
-    public Vector3 targetCenter, targetSize;
+    public Vector3 targetSpawnCenter, targetSpawnSize;
     public Transform target;
     public float targetSpeed;
-    [Tooltip("When to start rewarding speed")]
-    public float targetSpeedOffset = 5;
     [Tooltip("Random range")]
-    public float minSpeed = -100, maxSpeed = 100;
-    [Tooltip("If the random speed generated is closer to 0 than this, then reset to this")]
-    public float closestToZeroSpeed = 5;
+    public float minTargetSpeed = -100, maxTargetSpeed = 100;
+    [Tooltip("If the random speed generated is less than this, then set to this (appropriated for negative or positive)")]
+    public float closestToZeroTargetSpeed = 5;
 
     [Tooltip("The furthest the agent can be to the target before winning")]
     public float reachDistance = 2;
     [Tooltip("Minimum distance for another object to be to the agent's vehicle for the agent to fail")]
     public float collideDistance = 0.2f;
 
-    //private float accumulatedStepReward;
-    private float startSqrDistance;
-    //private float distanceReward, speedReward;
+    [Space(10)]
+    public float distanceHP = 1;
+    public float speedHP = 1;
+    public float reachHP = 5;
+    public float collisionHP = 5;
+    public float flipHP = 5;
 
-    private float minSpeedOffset;
-    private float minSqrDistance;
+    private float startDistance;
+    private float prevDistance;
 
     void Start()
     {
@@ -40,96 +41,70 @@ public class AgentDriver : Agent, AbstractDriver
     }
     private void OnDrawGizmosSelected()
     {
+        Gizmos.matrix = transform.localToWorldMatrix;
+
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(spawnCenter, spawnSize);
+        Gizmos.DrawWireCube(vehicleSpawnCenter, vehicleSpawnSize);
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(targetCenter, targetSize);
+        Gizmos.DrawWireCube(targetSpawnCenter, targetSpawnSize);
     }
 
     public override void AgentReset()
     {
         ResetVehicle();
         ResetTarget();
+        RandomizeTargetSpeed();
 
-        float randomSpeed = Mathf.Clamp(Random.Range(minSpeed, maxSpeed), -vehicles.currentVehicle.vehicleStats.maxReverseSpeed, vehicles.currentVehicle.vehicleStats.maxForwardSpeed);
-        if (randomSpeed > -closestToZeroSpeed && randomSpeed < closestToZeroSpeed)
-            randomSpeed = closestToZeroSpeed * Mathf.Sign(randomSpeed);
-        targetSpeed = randomSpeed;
-
-        startSqrDistance = (vehicles.currentVehicle.transform.position - target.position).sqrMagnitude;
-        //distanceReward = 0;
-        //speedReward = 0;
-
-        minSqrDistance = startSqrDistance;
-        minSpeedOffset = targetSpeed;
+        startDistance = (target.position - vehicles.currentVehicle.transform.position).magnitude;
+        prevDistance = startDistance;
     }
     public override void CollectObservations()
     {
-        AddVectorObs(target.position);
-        AddVectorObs(targetSpeed);
-        AddVectorObs(vehicles.currentVehicle.transform.position);
-        AddVectorObs(vehicles.currentVehicle.transform.rotation);
+        AddVectorObs(vehicles.currentVehicle.transform.position.x);
+        AddVectorObs(vehicles.currentVehicle.transform.position.z);
+        AddVectorObs(vehicles.currentVehicle.transform.rotation.eulerAngles.y);
+        AddVectorObs(target.position.x);
+        AddVectorObs(target.position.z);
+
         AddVectorObs(vehicles.currentVehicle.currentSpeed);
-        //AddVectorObs(vehicles.currentVehicle.vehicleRigidbody.velocity);
-        //AddVectorObs(vehicles.currentVehicle.vehicleRigidbody.angularVelocity);
+        AddVectorObs(targetSpeed);
 
         var hitInfos = GetHitInfos();
         foreach (var hitInfo in hitInfos)
         {
-            //Vector3 hitPoint = hitInfo.info.point;
-            //if (!hitInfo.hit)
-            //    hitPoint = hitInfo.rayStart + hitInfo.rayStartDirection * hitInfo.rayMaxDistance;
             float hitDistance = hitInfo.hit ? hitInfo.info.distance : -1;
             AddVectorObs(hitDistance);
         }
-
-        //base.CollectObservations(sensor);
     }
     public override void AgentAction(float[] vectorAction)
     {
         vehicles.currentVehicle.gas = vectorAction[0];
         vehicles.currentVehicle.steer = vectorAction[1];
-        //Debug.Log("ActionVertical: " + vectorAction[0]);
-        //Debug.Log("ActionHorizontal: " + vectorAction[1]);
-        //base.AgentAction(vectorAction);
 
-        float currentSqrDistance = (target.position - vehicles.currentVehicle.transform.position).sqrMagnitude;
+        float currentDistance = (target.position - vehicles.currentVehicle.transform.position).magnitude;
+        //SetReward(-currentDistance);
+        SetReward(-1);
+        //SetReward(prevDistance - currentDistance);
 
-        //Give distance reward
-        float distanceReward = 0;
-        //if (currentSqrDistance < minSqrDistance)
-        //{
-            distanceReward = CalculateDistanceReward(currentSqrDistance);
-            float prevDistanceReward = CalculateDistanceReward(minSqrDistance);
-            distanceReward = distanceReward - prevDistanceReward;
-            minSqrDistance = currentSqrDistance;
-        //}
+        //float currentDistanceReward = (currentDistance / startDistance) * distanceHP;
+        //float prevDistanceReward = (prevDistance / startDistance) * distanceHP;
+        //float changeInDistanceReward = Mathf.Clamp(prevDistanceReward - currentDistanceReward, -1, 1);
+        //prevDistance = currentDistance;
 
-        //Give speed reward
-        float speedReward = 0;
-        float currentSpeedOffset = targetSpeed - vehicles.currentVehicle.currentSpeed;
-        //if (currentSpeedOffset < minSpeedOffset)
-        //{
-            speedReward = CalculateSpeedReward(vehicles.currentVehicle.currentSpeed);
-            float prevSpeedReward = CalculateSpeedReward(targetSpeed - minSpeedOffset);
-            speedReward = speedReward - prevSpeedReward;
-            minSpeedOffset = currentSpeedOffset;
-        //}
+        //float speedReward = -Mathf.Abs((targetSpeed - vehicles.currentVehicle.currentSpeed) / targetSpeed) * speedPunishHP;
 
-        //Win on reach target
-        if (currentSqrDistance <= reachDistance * reachDistance)
+        //SetReward(distanceReward + speedReward);
+
+        //Reset on reach target
+        if (currentDistance <= reachDistance)
         {
-            //Debug.Log("We did it WE DID IT");
-            Debug.Log("FinalReward: " + distanceReward + " + " + speedReward + " + " + 0.333f + " = " + (distanceReward + speedReward + 0.333f));
-            SetReward(distanceReward + speedReward + 0.333f);
+            //SetReward(reachHP + changeInDistanceReward);
+            SetReward(reachHP);
             Done();
         }
-        else
-        {
-            Debug.Log("SubRewarded: " + distanceReward + " + " + speedReward + " = " + (distanceReward + speedReward));
-            SetReward(distanceReward + speedReward);
-        }
+        //else
+        //    SetReward(changeInDistanceReward);
 
         //Reset on 'collision'
         float closestDistance = float.MaxValue;
@@ -138,8 +113,7 @@ public class AgentDriver : Agent, AbstractDriver
             closestDistance = Mathf.Min(hitInfo.hit ? hitInfo.info.distance : float.MaxValue, closestDistance);
         if (closestDistance < collideDistance)
         {
-            //Debug.Log("Got too close to something");
-            SetReward(-2);
+            SetReward(-collisionHP);
             Done();
         }
 
@@ -147,7 +121,7 @@ public class AgentDriver : Agent, AbstractDriver
         if (Vector3.Dot(vehicles.currentVehicle.transform.up, Vector3.up) < 0)
         {
             //Debug.Log("Flipped over");
-            SetReward(-2);
+            SetReward(-flipHP);
             Done();
         }
 
@@ -162,23 +136,10 @@ public class AgentDriver : Agent, AbstractDriver
     {
         float vertical = Input.GetAxis("Vertical");
         float horizontal = Input.GetAxis("Horizontal");
-        //Debug.Log("Vertical: " + vertical);
-        //Debug.Log("Horizontal: " + horizontal);
 
         return new float[] { vertical, horizontal };
     }
 
-    private float CalculateDistanceReward(float sqrDistance)
-    {
-        float reachSqrDistance = Mathf.Min(reachDistance * reachDistance, startSqrDistance);
-        float distancePercent = sqrDistance / (startSqrDistance - reachSqrDistance);
-        distancePercent = 1 - distancePercent;
-        return Mathf.Clamp(distancePercent, -1, 1) * 0.333f;
-    }
-    private float CalculateSpeedReward(float speed)
-    {
-        return Mathf.Clamp(speed / targetSpeed, -1, 1) * 0.333f;
-    }
     private void ResetVehicle()
     {
         //Pick vehicle
@@ -191,28 +152,34 @@ public class AgentDriver : Agent, AbstractDriver
         vehicles.currentVehicle.castRays = true;
 
         //Teleport vehicle to random position and rotation
-        var randomPosition = new Vector3(spawnCenter.x + spawnSize.x / 2 * GetRandomValue(), spawnCenter.y + spawnSize.y / 2 * GetRandomValue(), spawnCenter.z + spawnSize.z / 2 * GetRandomValue());
+        var randomPosition = new Vector3(vehicleSpawnCenter.x + vehicleSpawnSize.x / 2 * GetRandomValue(), vehicleSpawnCenter.y + vehicleSpawnSize.y / 2 * GetRandomValue(), vehicleSpawnCenter.z + vehicleSpawnSize.z / 2 * GetRandomValue());
         var randomRotation = Quaternion.Euler(0, 360 * Random.value, 0);
-        vehicles.currentVehicle.Teleport(randomPosition, randomRotation);
+        vehicles.currentVehicle.Teleport(transform.TransformPoint(randomPosition), transform.TransformRotation(randomRotation));
     }
     private void ResetTarget()
     {
-        var randomPosition = new Vector3(targetCenter.x + targetSize.x / 2 * GetRandomValue(), targetCenter.y + targetSize.y / 2 * GetRandomValue(), targetCenter.z + targetSize.z / 2 * GetRandomValue());
-        target.position = randomPosition;
+        var randomPosition = new Vector3(targetSpawnCenter.x + targetSpawnSize.x / 2 * GetRandomValue(), targetSpawnCenter.y + targetSpawnSize.y / 2 * GetRandomValue(), targetSpawnCenter.z + targetSpawnSize.z / 2 * GetRandomValue());
+        target.position = transform.TransformPoint(randomPosition);
+    }
+    private void RandomizeTargetSpeed()
+    {
+        float randomSpeed = Mathf.Clamp(Random.Range(minTargetSpeed, maxTargetSpeed), -vehicles.currentVehicle.vehicleStats.maxReverseSpeed, vehicles.currentVehicle.vehicleStats.maxForwardSpeed);
+        if (randomSpeed > -closestToZeroTargetSpeed && randomSpeed < closestToZeroTargetSpeed)
+            randomSpeed = closestToZeroTargetSpeed * Mathf.Sign(randomSpeed);
+        targetSpeed = randomSpeed;
     }
 
     private RaycastHitInfo[] GetHitInfos()
     {
         return new RaycastHitInfo[] { vehicles.currentVehicle.GetForwardHitInfo(), vehicles.currentVehicle.GetRightHitInfo(), vehicles.currentVehicle.GetLeftHitInfo(), vehicles.currentVehicle.GetRearHitInfo() };
     }
+    private float GetRandomValue()
+    {
+        return (Random.value * 2) - 1;
+    }
 
     public CarPhysics GetVehicle()
     {
         return vehicles.currentVehicle;
-    }
-
-    private float GetRandomValue()
-    {
-        return (Random.value * 2) - 1;
     }
 }

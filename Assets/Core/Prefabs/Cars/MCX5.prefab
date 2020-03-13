@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8738893304812727874}
+  - component: {fileID: 7863643461541629514}
   - component: {fileID: 5620038090041044644}
   m_Layer: 0
   m_Name: SM_Veh_Car_Medium_Wheel_fl
@@ -31,6 +32,19 @@ Transform:
   m_Father: {fileID: 4978498383862090440}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7863643461541629514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1172287540158444642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 5620038090041044644}
 --- !u!114 &5620038090041044644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -784,6 +798,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6972032730638535398}
+  - component: {fileID: 7769779058712556216}
   - component: {fileID: 3108191082308900900}
   m_Layer: 0
   m_Name: SM_Veh_Car_Medium_Wheel_fr
@@ -806,6 +821,19 @@ Transform:
   m_Father: {fileID: 4978498383862090440}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7769779058712556216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1319329996897504081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 3108191082308900900}
 --- !u!114 &3108191082308900900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1994,10 +2022,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vehicleRigidbody: {fileID: 4164465499356554425}
-  wheelFL: {fileID: 8738893304812727874}
-  wheelFR: {fileID: 6972032730638535398}
-  wheelRL: {fileID: 244542469995834468}
-  wheelRR: {fileID: 8998796275098972600}
+  wheelFL: {fileID: 7863643461541629514}
+  wheelFR: {fileID: 7769779058712556216}
+  wheelRL: {fileID: 3360367382887843476}
+  wheelRR: {fileID: 6780085509469936593}
   wheelGroundDistance: 1
   vehicleStats: {fileID: 11400000, guid: 9ba039562f505374eb2e36502b713cfb, type: 2}
   gas: 0
@@ -2259,6 +2287,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 244542469995834468}
+  - component: {fileID: 3360367382887843476}
   - component: {fileID: 4071385697908825039}
   m_Layer: 0
   m_Name: SM_Veh_Car_Medium_Wheel_rl
@@ -2281,6 +2310,19 @@ Transform:
   m_Father: {fileID: 4978498383862090440}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3360367382887843476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2753322883867731657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 4071385697908825039}
 --- !u!114 &4071385697908825039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3034,6 +3076,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8998796275098972600}
+  - component: {fileID: 6780085509469936593}
   - component: {fileID: 5995439156053520087}
   m_Layer: 0
   m_Name: SM_Veh_Car_Medium_Wheel_rr
@@ -3056,6 +3099,19 @@ Transform:
   m_Father: {fileID: 4978498383862090440}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6780085509469936593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4532687066947168107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 5995439156053520087}
 --- !u!114 &5995439156053520087
 MonoBehaviour:
   m_ObjectHideFlags: 0

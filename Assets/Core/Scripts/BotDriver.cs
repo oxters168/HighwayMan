@@ -93,7 +93,7 @@ public class BotDriver : MonoBehaviour, AbstractDriver
             nextSteer = maxSteer * -Mathf.Sign(vehicleAngle) / 8;
 
         //Calculating gas value to conform to set speed
-        float nextGas = currentVehicle.currentSpeed < spawnSpeed ? 1 : 0;
+        float nextGas = currentVehicle.currentForwardSpeed < spawnSpeed ? 1 : 0;
 
         var forwardHitInfo = currentVehicle.GetForwardHitInfo();
         var leftHitInfo = currentVehicle.GetLeftHitInfo();
@@ -104,7 +104,7 @@ public class BotDriver : MonoBehaviour, AbstractDriver
             if (forwardHitInfo.hit)
             {
                 float distanceToObstacle = forwardHitInfo.info.distance;
-                float predictedDistanceTravel = currentVehicle.currentSpeed * Time.fixedDeltaTime;
+                float predictedDistanceTravel = currentVehicle.currentForwardSpeed * Time.fixedDeltaTime;
                 nextGas = -(1 - Mathf.Clamp01(predictedDistanceTravel / distanceToObstacle));
                 //nextGas = -(1 - forwardHitInfo.distance / forwardDistanceObstacleCheck);
             }
@@ -113,14 +113,14 @@ public class BotDriver : MonoBehaviour, AbstractDriver
             if (forwardHitInfo.hit)
             {
                 float obstacleAngle = currentVehicle.GetHitAngle(forwardHitInfo);
-                if (obstacleAngle > 0 && currentVehicle.currentSpeed > 0 || obstacleAngle < 0 && currentVehicle.currentSpeed < 0)
+                if (obstacleAngle > 0 && currentVehicle.currentForwardSpeed > 0 || obstacleAngle < 0 && currentVehicle.currentForwardSpeed < 0)
                     nextSteer = -1;
                 else
                     nextSteer = 1;
             }
-            else if (leftHitInfo.hit && currentVehicle.currentSpeed > 0 || rightHitInfo.hit && currentVehicle.currentSpeed < 0)
+            else if (leftHitInfo.hit && currentVehicle.currentForwardSpeed > 0 || rightHitInfo.hit && currentVehicle.currentForwardSpeed < 0)
                 nextSteer = 1;
-            else if (rightHitInfo.hit && currentVehicle.currentSpeed > 0 || leftHitInfo.hit && currentVehicle.currentSpeed < 0)
+            else if (rightHitInfo.hit && currentVehicle.currentForwardSpeed > 0 || leftHitInfo.hit && currentVehicle.currentForwardSpeed < 0)
                 nextSteer = -1;
         }
 
@@ -159,7 +159,7 @@ public class BotDriver : MonoBehaviour, AbstractDriver
         if (followVehicle != null)
         {
             float keepUpDirection = Vector3.Dot(followVehicle.transform.forward, Vector3.forward);
-            float keepUpSpeed = followVehicle.currentSpeed;
+            float keepUpSpeed = followVehicle.currentForwardSpeed;
             if ((keepUpDirection < 0 && keepUpSpeed > 0) || keepUpDirection > 0 && (keepUpSpeed < 0 || spawnSpeed < keepUpSpeed))
             {
                 spawnFrom = frontSpawn;

@@ -25,7 +25,7 @@ public class CarCameraBridge : MonoBehaviour
         var vehicle = targetVehicle?.GetVehicle();
         if (vehicle != null)
         {
-            float speedPercent = vehicle.currentSpeed / vehicle.vehicleStats.maxForwardSpeed;
+            float speedPercent = vehicle.currentTotalSpeed / vehicle.vehicleStats.maxForwardSpeed;
             var camerasCamera = followCamera.GetComponent<Camera>();
             float lerpedOrtho = Mathf.Lerp(camerasCamera.orthographicSize, Mathf.Lerp(orthoMinSize, orthoMaxSize, speedPercent), Time.deltaTime * orthoLerp);
             camerasCamera.orthographicSize = lerpedOrtho;
@@ -33,7 +33,7 @@ public class CarCameraBridge : MonoBehaviour
             cameraMosaic.BlockSize = Mathf.Lerp(closeMosaicValue, farMosaicValue, orthoPercent);
 
             followCamera.target = vehicle.transform;
-            speedGauge.text = MathHelpers.SetDecimalPlaces(vehicle.currentSpeed, 2).ToString();
+            speedGauge.text = MathHelpers.SetDecimalPlaces(vehicle.currentForwardSpeed, 2).ToString();
         }
     }
 

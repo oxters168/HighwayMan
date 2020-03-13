@@ -67,7 +67,7 @@ public class AgentDriver : Agent, AbstractDriver
         AddVectorObs(target.position.x);
         AddVectorObs(target.position.z);
 
-        AddVectorObs(vehicles.currentVehicle.currentSpeed);
+        AddVectorObs(vehicles.currentVehicle.currentForwardSpeed);
         AddVectorObs(targetSpeed);
 
         var hitInfos = GetHitInfos();

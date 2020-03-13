@@ -600,10 +600,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vehicleRigidbody: {fileID: 6469593765790594905}
-  wheelFL: {fileID: 7396358854786231324}
-  wheelFR: {fileID: 7396358853372222074}
-  wheelRL: {fileID: 7396358853742689003}
-  wheelRR: {fileID: 7396358854567204319}
+  wheelFL: {fileID: 1064170089382830374}
+  wheelFR: {fileID: 3398323739005253084}
+  wheelRL: {fileID: 6109405530886698776}
+  wheelRR: {fileID: 8946905762834993327}
   wheelGroundDistance: 1
   vehicleStats: {fileID: 11400000, guid: cca623b16df33e6488b23e93c99b7252, type: 2}
   gas: 0
@@ -709,6 +709,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7396358853372222074}
+  - component: {fileID: 3398323739005253084}
   - component: {fileID: 8545266698158373861}
   m_Layer: 9
   m_Name: SM_Veh_Car_Muscle_Wheel_fr
@@ -731,6 +732,19 @@ Transform:
   m_Father: {fileID: 7396358853696064831}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3398323739005253084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7396358853372222053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 8545266698158373861}
 --- !u!114 &8545266698158373861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -751,7 +765,7 @@ MonoBehaviour:
     dragForce: 50
     rpm: 0
     prevWorldPosition: {x: 0, y: 0, z: 0}
-    worldPosition: {x: 0.790015, y: 0.35562056, z: -48.07755}
+    worldPosition: {x: 0.790015, y: 0.35562056, z: 1.922451}
     prevGroundPoint: {x: 0, y: 0, z: 0}
     worldRotation: {x: 0, y: 0, z: 0, w: 0}
     camberCurve:
@@ -1518,6 +1532,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7396358853742689003}
+  - component: {fileID: 6109405530886698776}
   - component: {fileID: 7721381009201449542}
   m_Layer: 9
   m_Name: SM_Veh_Car_Muscle_Wheel_rl
@@ -1540,6 +1555,19 @@ Transform:
   m_Father: {fileID: 7396358853696064831}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6109405530886698776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7396358853742689002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 7721381009201449542}
 --- !u!114 &7721381009201449542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1560,7 +1588,7 @@ MonoBehaviour:
     dragForce: 50
     rpm: 0
     prevWorldPosition: {x: 0, y: 0, z: 0}
-    worldPosition: {x: -0.790015, y: 0.40654895, z: -51.354866}
+    worldPosition: {x: -0.790015, y: 0.40654895, z: -1.354866}
     prevGroundPoint: {x: 0, y: 0, z: 0}
     worldRotation: {x: 0, y: 0, z: 0, w: 0}
     camberCurve:
@@ -2293,6 +2321,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7396358854567204319}
+  - component: {fileID: 8946905762834993327}
   - component: {fileID: 371380638603366571}
   m_Layer: 9
   m_Name: SM_Veh_Car_Muscle_Wheel_rr
@@ -2315,6 +2344,19 @@ Transform:
   m_Father: {fileID: 7396358853696064831}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8946905762834993327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7396358854567204318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 371380638603366571}
 --- !u!114 &371380638603366571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2335,7 +2377,7 @@ MonoBehaviour:
     dragForce: 50
     rpm: 0
     prevWorldPosition: {x: 0, y: 0, z: 0}
-    worldPosition: {x: 0.790015, y: 0.40654895, z: -51.354866}
+    worldPosition: {x: 0.790015, y: 0.40654895, z: -1.354866}
     prevGroundPoint: {x: 0, y: 0, z: 0}
     worldRotation: {x: 0, y: 0, z: 0, w: 0}
     camberCurve:
@@ -3068,6 +3110,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7396358854786231324}
+  - component: {fileID: 1064170089382830374}
   - component: {fileID: 526171716552495838}
   m_Layer: 9
   m_Name: SM_Veh_Car_Muscle_Wheel_fl
@@ -3090,6 +3133,19 @@ Transform:
   m_Father: {fileID: 7396358853696064831}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1064170089382830374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7396358854786231327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 526171716552495838}
 --- !u!114 &526171716552495838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3110,7 +3166,7 @@ MonoBehaviour:
     dragForce: 50
     rpm: 0
     prevWorldPosition: {x: 0, y: 0, z: 0}
-    worldPosition: {x: -0.790015, y: 0.35562056, z: -48.07755}
+    worldPosition: {x: -0.790015, y: 0.35562056, z: 1.922451}
     prevGroundPoint: {x: 0, y: 0, z: 0}
     worldRotation: {x: 0, y: 0, z: 0, w: 0}
     camberCurve:

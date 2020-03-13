@@ -3,7 +3,9 @@
 public class Repeater : MonoBehaviour
 {
     public Transform target;
-    public RoadPart extraFront, front, mid, rear, extraRear;
+    public GameObject extraFront;
+    public RoadPart front, mid, rear;
+    public GameObject extraRear;
 
     public float size = 50;
     public float offset = 25;
@@ -22,11 +24,11 @@ public class Repeater : MonoBehaviour
         int rearIndex = index - 1;
         int extraRearIndex = index - 2;
 
-        SetRoadType(extraFront, extraFrontIndex);
+        //SetRoadType(extraFront, extraFrontIndex);
         SetRoadType(front, frontIndex);
         SetRoadType(mid, midIndex);
         SetRoadType(rear, rearIndex);
-        SetRoadType(extraRear, extraRearIndex);
+        //SetRoadType(extraRear, extraRearIndex);
 
         extraFront.transform.position = new Vector3(extraFront.transform.position.x, extraFront.transform.position.y, extraFrontIndex * size);
         front.transform.position = new Vector3(front.transform.position.x, front.transform.position.y, frontIndex * size);

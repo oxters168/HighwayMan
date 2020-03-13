@@ -43,6 +43,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9091465457702431750}
+  - component: {fileID: 6707520049061043008}
   - component: {fileID: 4947721905955771557}
   m_Layer: 9
   m_Name: SM_Veh_Car_Sedan_Wheel_rl
@@ -65,6 +66,19 @@ Transform:
   m_Father: {fileID: 4869263342575699302}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6707520049061043008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 738888928065574350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 4947721905955771557}
 --- !u!114 &4947721905955771557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -852,6 +866,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5453481520554959338}
+  - component: {fileID: 1019467762061776365}
   - component: {fileID: 1178231648011220868}
   m_Layer: 9
   m_Name: SM_Veh_Car_Sedan_Wheel_fl
@@ -874,6 +889,19 @@ Transform:
   m_Father: {fileID: 4869263342575699302}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1019467762061776365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2685299526091102486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 1178231648011220868}
 --- !u!114 &1178231648011220868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2218,15 +2246,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vehicleRigidbody: {fileID: 782946125281716913}
-  wheelFL: {fileID: 5453481520554959338}
-  wheelFR: {fileID: 2395298753344468210}
-  wheelRL: {fileID: 9091465457702431750}
-  wheelRR: {fileID: 2309633309664514906}
+  wheelFL: {fileID: 1019467762061776365}
+  wheelFR: {fileID: 4373533096873886527}
+  wheelRL: {fileID: 6707520049061043008}
+  wheelRR: {fileID: 7733641463556932417}
   wheelGroundDistance: 1
   vehicleStats: {fileID: 11400000, guid: a8cac4e1b20479d4098fe184b17e8ec2, type: 2}
   gas: 0
   brake: 0
   steer: 0
+  castRays: 0
 --- !u!54 &782946125281716913
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2326,6 +2355,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2395298753344468210}
+  - component: {fileID: 4373533096873886527}
   - component: {fileID: 4512243933124737360}
   m_Layer: 9
   m_Name: SM_Veh_Car_Sedan_Wheel_fr
@@ -2348,6 +2378,19 @@ Transform:
   m_Father: {fileID: 4869263342575699302}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4373533096873886527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4936167956492101969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 4512243933124737360}
 --- !u!114 &4512243933124737360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3101,6 +3144,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2309633309664514906}
+  - component: {fileID: 7733641463556932417}
   - component: {fileID: 1331837764627621035}
   m_Layer: 9
   m_Name: SM_Veh_Car_Sedan_Wheel_rr
@@ -3123,6 +3167,19 @@ Transform:
   m_Father: {fileID: 4869263342575699302}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7733641463556932417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6853161955513361348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb9fb71626b2c84082faf109da1fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheel: {fileID: 1331837764627621035}
 --- !u!114 &1331837764627621035
 MonoBehaviour:
   m_ObjectHideFlags: 0

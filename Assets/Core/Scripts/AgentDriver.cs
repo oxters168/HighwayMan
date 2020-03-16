@@ -5,6 +5,7 @@ using UnityHelpers;
 public class AgentDriver : Agent, AbstractDriver
 {
     public VehicleSwitcher vehicles;
+    public Carability carability;
 
     public Vector3 vehicleSpawnCenter, vehicleSpawnSize;
 
@@ -14,6 +15,8 @@ public class AgentDriver : Agent, AbstractDriver
 
     public Vector3 targetSpawnCenter, targetSpawnSize;
     public Transform target;
+    [Tooltip("The max angle the vehicle can face from the target. This spawns the vehicle facing the target randomly within this angle")]
+    public float maxTargetOffsetAngle = 45;
     public float targetSpeed;
     [Tooltip("Random range")]
     public float minTargetSpeed = -100, maxTargetSpeed = 100;
@@ -33,7 +36,9 @@ public class AgentDriver : Agent, AbstractDriver
     public float flipHP = 5;
 
     private float startDistance;
-    private float prevDistance;
+    //private float prevDistance;
+    private int stepsPassed;
+    private float accumulatedDistance;
 
     void Start()
     {
@@ -52,23 +57,28 @@ public class AgentDriver : Agent, AbstractDriver
 
     public override void AgentReset()
     {
-        ResetVehicle();
         ResetTarget();
+        ResetVehicle();
         RandomizeTargetSpeed();
 
         startDistance = (target.position - vehicles.currentVehicle.transform.position).magnitude;
-        prevDistance = startDistance;
+        //prevDistance = startDistance;
+        stepsPassed = 0;
+        accumulatedDistance = 0;
     }
     public override void CollectObservations()
     {
         AddVectorObs(vehicles.currentVehicle.transform.position.x);
         AddVectorObs(vehicles.currentVehicle.transform.position.z);
-        AddVectorObs(vehicles.currentVehicle.transform.rotation.eulerAngles.y);
+        //AddVectorObs(vehicles.currentVehicle.transform.rotation.eulerAngles.y);
         AddVectorObs(target.position.x);
         AddVectorObs(target.position.z);
+        Vector3 targetDirection = (target.position - vehicles.currentVehicle.vehicleRigidbody.transform.position).normalized;
+        float targetAngle = Vector3.SignedAngle(targetDirection, vehicles.currentVehicle.vehicleRigidbody.transform.forward, vehicles.currentVehicle.vehicleRigidbody.transform.up);
+        AddVectorObs(targetAngle);
 
         AddVectorObs(vehicles.currentVehicle.currentForwardSpeed);
-        AddVectorObs(targetSpeed);
+        //AddVectorObs(targetSpeed);
 
         var hitInfos = GetHitInfos();
         foreach (var hitInfo in hitInfos)
@@ -80,56 +90,70 @@ public class AgentDriver : Agent, AbstractDriver
     public override void AgentAction(float[] vectorAction)
     {
         vehicles.currentVehicle.gas = vectorAction[0];
-        vehicles.currentVehicle.steer = vectorAction[1];
+        //vehicles.currentVehicle.steer = vectorAction[1];
 
-        float currentDistance = (target.position - vehicles.currentVehicle.transform.position).magnitude;
-        //SetReward(-currentDistance);
-        SetReward(-1);
-        //SetReward(prevDistance - currentDistance);
+        var vehicleRigidbody = vehicles.currentVehicle.vehicleRigidbody;
 
-        //float currentDistanceReward = (currentDistance / startDistance) * distanceHP;
-        //float prevDistanceReward = (prevDistance / startDistance) * distanceHP;
-        //float changeInDistanceReward = Mathf.Clamp(prevDistanceReward - currentDistanceReward, -1, 1);
-        //prevDistance = currentDistance;
+        stepsPassed++;
 
-        //float speedReward = -Mathf.Abs((targetSpeed - vehicles.currentVehicle.currentSpeed) / targetSpeed) * speedPunishHP;
-
-        //SetReward(distanceReward + speedReward);
+        float currentDistance = (target.position - vehicleRigidbody.transform.position).magnitude;
 
         //Reset on reach target
         if (currentDistance <= reachDistance)
         {
-            //SetReward(reachHP + changeInDistanceReward);
-            SetReward(reachHP);
+            //SetReward(reachHP);
+            //Debug.Log("Reached target");
             Done();
         }
-        //else
-        //    SetReward(changeInDistanceReward);
-
-        //Reset on 'collision'
-        float closestDistance = float.MaxValue;
-        var hitInfos = GetHitInfos();
-        foreach (var hitInfo in hitInfos)
-            closestDistance = Mathf.Min(hitInfo.hit ? hitInfo.info.distance : float.MaxValue, closestDistance);
-        if (closestDistance < collideDistance)
+        else
         {
-            SetReward(-collisionHP);
-            Done();
-        }
+            //float closestDistance = float.MaxValue;
+            //var hitInfos = GetHitInfos();
+            //foreach (var hitInfo in hitInfos)
+            //    closestDistance = Mathf.Min(hitInfo.hit ? hitInfo.info.distance : float.MaxValue, closestDistance);
 
-        //Reset on flip
-        if (Vector3.Dot(vehicles.currentVehicle.transform.up, Vector3.up) < 0)
-        {
-            //Debug.Log("Flipped over");
-            SetReward(-flipHP);
-            Done();
-        }
+            //Reset on 'collision'
+            //if (closestDistance < collideDistance)
+            //{
+                //int stepsLeft = maxStep - stepsPassed;
+                //float averageDistanceError = Mathf.Sqrt(accumulatedDistance);
+                //SetReward(-(averageDistanceError * stepsLeft));
+            //    Done();
+            //}
+            //Reset on flip
+            //else if (Vector3.Dot(vehicles.currentVehicle.transform.up, Vector3.up) < 0)
+            //{
+                //int stepsLeft = maxStep - stepsPassed;
+                //float averageDistanceError = Mathf.Sqrt(accumulatedDistance);
+                //SetReward(-(averageDistanceError * stepsLeft));
+            //    Done();
+            //}
+            //Reset on fall
+            if (vehicleRigidbody.transform.position.y < -2)
+            {
+                Done();
+            }
+            else
+            {
+                Vector3 targetDirection = (target.position - vehicleRigidbody.transform.position).normalized;
+                float targetDirectionPercent = vehicleRigidbody.velocity.PercentDirection(targetDirection);
+                var currentTargetDirectionSpeed = vehicles.currentVehicle.currentTotalSpeed * targetDirectionPercent;
+                if (currentTargetDirectionSpeed < 0.05f && currentTargetDirectionSpeed > -0.05f)
+                    currentTargetDirectionSpeed = 0;
 
-        //Reset on fall
-        if (vehicles.currentVehicle.transform.position.y < -2)
-        {
-            //Debug.Log("Fell down the rabbit hole");
-            Done();
+                float reward = currentTargetDirectionSpeed;
+                if (currentTargetDirectionSpeed <= 0)
+                    //reward = -speedHP;
+                    reward = -Mathf.Pow(currentTargetDirectionSpeed - 1, 2);
+
+                float targetAngle = Vector3.Angle(targetDirection, vehicleRigidbody.transform.forward);
+                //Debug.Log("Current reward: " + reward + " current target directional speed: " + currentTargetDirectionSpeed);
+                //accumulatedDistance += currentDistance * currentDistance;
+                //if (targetAngle > maxTargetOffsetAngle || currentTargetDirectionSpeed < -speedHP)
+                //    Done();
+                //else
+                    SetReward(reward);
+            }
         }
     }
     public override float[] Heuristic()
@@ -153,7 +177,10 @@ public class AgentDriver : Agent, AbstractDriver
 
         //Teleport vehicle to random position and rotation
         var randomPosition = new Vector3(vehicleSpawnCenter.x + vehicleSpawnSize.x / 2 * GetRandomValue(), vehicleSpawnCenter.y + vehicleSpawnSize.y / 2 * GetRandomValue(), vehicleSpawnCenter.z + vehicleSpawnSize.z / 2 * GetRandomValue());
-        var randomRotation = Quaternion.Euler(0, 360 * Random.value, 0);
+
+        Vector3 targetDirection = (target.position - randomPosition).normalized;
+        float targetAngle = Quaternion.LookRotation(targetDirection, Vector3.up).eulerAngles.y;
+        var randomRotation = Quaternion.Euler(0, targetAngle + maxTargetOffsetAngle * (Random.value * 2 - 1), 0);
         vehicles.currentVehicle.Teleport(transform.TransformPoint(randomPosition), transform.TransformRotation(randomRotation));
     }
     private void ResetTarget()
@@ -181,5 +208,10 @@ public class AgentDriver : Agent, AbstractDriver
     public CarPhysics GetVehicle()
     {
         return vehicles.currentVehicle;
+    }
+
+    public Carability GetCarability()
+    {
+        return carability;
     }
 }

@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3641802625896976554}
+  - component: {fileID: 7855827120333006629}
   - component: {fileID: 3641802625896976552}
   - component: {fileID: 3641802625896976556}
   - component: {fileID: 3641802625896976553}
@@ -34,9 +35,27 @@ Transform:
   - {fileID: 3660756144423524328}
   - {fileID: 4059957041991290346}
   - {fileID: 318804112672954482}
+  - {fileID: 6188357063494613224}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7855827120333006629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3641802625896976557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f901ff76c6034b4bbcb312f4898fa70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  self: {fileID: 3641802625896976556}
+  license: 
+  scan: 0
+  scanLevel: 0
+  scansPerSecond: 0.25
 --- !u!114 &3641802625896976552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54,12 +73,14 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   maxStep: 500
   vehicles: {fileID: 3641802625896976556}
+  carability: {fileID: 7855827120333006629}
   vehicleSpawnCenter: {x: 0, y: 0, z: 0}
   vehicleSpawnSize: {x: 0, y: 0, z: 0}
   vehicleIndex: -1
   targetSpawnCenter: {x: 0, y: 0, z: 0}
   targetSpawnSize: {x: 0, y: 0, z: 200}
   target: {fileID: 0}
+  maxTargetOffsetAngle: 0
   targetSpeed: 0
   minTargetSpeed: -100
   maxTargetSpeed: 100
@@ -67,7 +88,7 @@ MonoBehaviour:
   reachDistance: 5
   collideDistance: 1
   distanceHP: 1
-  speedHP: 1
+  speedHP: 10
   reachHP: 1000
   collisionHP: 1000
   flipHP: 1000
@@ -87,6 +108,7 @@ MonoBehaviour:
   - {fileID: 1341421571881003093}
   - {fileID: 8836925859267156151}
   - {fileID: 8631857595112835628}
+  - {fileID: 6188357063494956963}
   index: 1
 --- !u!114 &3641802625896976553
 MonoBehaviour:
@@ -101,9 +123,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    vectorObservationSize: 11
+    vectorObservationSize: 10
     numStackedVectorObservations: 1
-    vectorActionSize: 02000000
+    vectorActionSize: 01000000
     vectorActionDescriptions: []
     vectorActionSpaceType: 1
   m_Model: {fileID: 0}
@@ -127,6 +149,104 @@ MonoBehaviour:
   DecisionPeriod: 1
   RepeatAction: 1
   offsetStep: 0
+--- !u!1001 &876487474839470333
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3641802625896976554}
+    m_Modifications:
+    - target: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790594907, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_Name
+      value: Camaro
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790594907, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790594910, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: vehicleStats
+      value: 
+      objectReference: {fileID: 11400000, guid: 77846376ea5b9354590a047d142769ad,
+        type: 2}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 23ce93d683fa3f945a086b04e8fabe17, type: 3}
+--- !u!4 &6188357063494613224 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6469593765790283797, guid: 23ce93d683fa3f945a086b04e8fabe17,
+    type: 3}
+  m_PrefabInstance: {fileID: 876487474839470333}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6188357063494956963 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6469593765790594910, guid: 23ce93d683fa3f945a086b04e8fabe17,
+    type: 3}
+  m_PrefabInstance: {fileID: 876487474839470333}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c892462238a37e44bee0fa2dbf0a256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3256814157638774513
 PrefabInstance:
   m_ObjectHideFlags: 0

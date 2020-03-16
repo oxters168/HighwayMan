@@ -49,7 +49,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f901ff76c6034b4bbcb312f4898fa70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  self: {fileID: 2472410463131429466}
   license: 
+  scan: 0
+  scanLevel: 0
+  scansPerSecond: 0.25
 --- !u!114 &1166930858805102131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,13 +67,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vehicles: {fileID: 2472410463131429466}
+  carability: {fileID: 4955566686765853537}
   keepUpWithObject: {fileID: 0}
-  speedLimit: 27.78
-  frontSpawn: {fileID: 0}
-  rearSpawn: {fileID: 0}
   defaultTargetIndex: 0
   targetSwitchTime: 3
-  targetSwitchPercent: 0.2
+  targetSwitchPercent: 0.02
   maxAngle: 3
   minAngle: 1
   maxSteer: 0.1
@@ -102,6 +104,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2674681143217946250}
     m_Modifications:
+    - target: {fileID: 89114528421680640, guid: 8fecde0364096544c8bdf01d54908c35,
+        type: 3}
+      propertyPath: vehicleStats
+      value: 
+      objectReference: {fileID: 11400000, guid: a8cac4e1b20479d4098fe184b17e8ec2,
+        type: 2}
     - target: {fileID: 554151214646759592, guid: 8fecde0364096544c8bdf01d54908c35,
         type: 3}
       propertyPath: m_Enabled
@@ -269,6 +277,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4383924398627152002, guid: 5cb9c7cbc2e142b4b91894d975ca6021,
+        type: 3}
+      propertyPath: vehicleStats
+      value: 
+      objectReference: {fileID: 11400000, guid: 9ba039562f505374eb2e36502b713cfb,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5cb9c7cbc2e142b4b91894d975ca6021, type: 3}
 --- !u!4 &1632129065584509126 stripped
@@ -361,6 +375,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6554993137502184669, guid: 623928aa8ec3c8d449d84bb51e46bccd,
+        type: 3}
+      propertyPath: vehicleStats
+      value: 
+      objectReference: {fileID: 11400000, guid: a8cac4e1b20479d4098fe184b17e8ec2,
+        type: 2}
     m_RemovedComponents:
     - {fileID: 2858589398469373100, guid: 623928aa8ec3c8d449d84bb51e46bccd, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 623928aa8ec3c8d449d84bb51e46bccd, type: 3}
@@ -464,6 +484,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6469593765790594910, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: vehicleStats
+      value: 
+      objectReference: {fileID: 11400000, guid: cca623b16df33e6488b23e93c99b7252,
+        type: 2}
     - target: {fileID: 7721381009201449542, guid: 23ce93d683fa3f945a086b04e8fabe17,
         type: 3}
       propertyPath: wheel.worldPosition.z

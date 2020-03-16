@@ -79,3 +79,6 @@ Assets/Rewired/*
 
 Assets/ML-Agents/*
 !Assets/ML-Agents/.gitkeep
+
+Assets/FastNoise Unity/*
+!Assets/FastNoise Unity/.gitkeep

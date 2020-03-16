@@ -36,7 +36,8 @@ public class Repeater : MonoBehaviour
         rear.transform.position = new Vector3(rear.transform.position.x, rear.transform.position.y, rearIndex * size);
         extraRear.transform.position = new Vector3(extraRear.transform.position.x, extraRear.transform.position.y, extraRearIndex * size);
 
-        pointsOfInterest.position = new Vector3(pointsOfInterest.position.x, pointsOfInterest.position.y, midIndex * size);
+        if (pointsOfInterest != null)
+            pointsOfInterest.position = new Vector3(pointsOfInterest.position.x, pointsOfInterest.position.y, midIndex * size);
     }
 
     private void SetRoadType(RoadPart road, int roadIndex)

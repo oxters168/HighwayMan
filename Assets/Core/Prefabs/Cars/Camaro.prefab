@@ -605,7 +605,7 @@ MonoBehaviour:
   wheelRL: {fileID: 6109405530886698776}
   wheelRR: {fileID: 8946905762834993327}
   wheelGroundDistance: 1
-  vehicleStats: {fileID: 11400000, guid: cca623b16df33e6488b23e93c99b7252, type: 2}
+  vehicleStats: {fileID: 11400000, guid: 77846376ea5b9354590a047d142769ad, type: 2}
   gas: 0
   brake: 0
   steer: 0

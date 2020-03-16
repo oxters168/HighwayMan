@@ -4,16 +4,14 @@ using UnityHelpers;
 public class BotDriver : MonoBehaviour, AbstractDriver
 {
     public VehicleSwitcher vehicles;
+    public Carability carability;
     [Tooltip("Has to implement the interface AbstractDriver")]
     public GameObject keepUpWithObject;
-    private AbstractDriver keepUpWith;
+    //private AbstractDriver keepUpWith;
 
-    [Space(10), Tooltip("In m/s")]
-    public float speedLimit = 27.78f;
-
-    [Space(10)]
-    public Transform frontSpawn;
-    public Transform rearSpawn;
+    //[Space(10)]
+    //public Transform frontSpawn;
+    //public Transform rearSpawn;
 
     [Space(10), Tooltip("The default target when respawned")]
     public int defaultTargetIndex;
@@ -37,6 +35,9 @@ public class BotDriver : MonoBehaviour, AbstractDriver
     public Transform[] targets;
     public int currentTargetIndex;
 
+    public event FallenHandler onFall;
+    public delegate void FallenHandler(BotDriver caller);
+
     //private bool spawnedFromRear;
 
     private float spawnSpeed;
@@ -45,11 +46,11 @@ public class BotDriver : MonoBehaviour, AbstractDriver
     {
         //treeCollider.onTriggerEnter.AddListener(OnTreeTriggerEnter);
     }
-    private void Start()
+    /*private void Start()
     {
-        RespawnRandom();
+        RespawnRandomVehicle();
         keepUpWith = keepUpWithObject.GetComponent<AbstractDriver>();
-    }
+    }*/
     private void Update()
     {
         var currentVehicle = vehicles.currentVehicle;
@@ -68,8 +69,9 @@ public class BotDriver : MonoBehaviour, AbstractDriver
 
     private void RespawnCheck(CarPhysics currentVehicle)
     {
-        if (currentVehicle.transform.position.y < -5)
-            RespawnRandom();
+        if (currentVehicle.transform.position.y < -0.5f)
+            onFall?.Invoke(this);
+            //RespawnRandomVehicle();
     }
     private void Drive(CarPhysics currentVehicle)
     {
@@ -134,27 +136,37 @@ public class BotDriver : MonoBehaviour, AbstractDriver
         {
             float rng = Random.Range(0, 1f);
             if (rng <= targetSwitchPercent)
-                currentTargetIndex = Random.Range(0, targets.Length);
+                ChangeLane();
 
             lastTargetSwitchTime = Time.time;
         }
     }
-
-    public void RespawnRandom()
+    public void ChangeLane()
     {
-        Respawn(Random.Range(0, vehicles.allVehicles.Length));
+        float randomValue = Mathf.Pow(Random.value * 2 - 1, 9);
+        int lanesToShift = Mathf.RoundToInt((randomValue + Mathf.Sign(randomValue) * 1) * (targets.Length - 1));
+        int nextTargetIndex = Mathf.Clamp(currentTargetIndex + lanesToShift, 0, targets.Length - 1);
+        if (nextTargetIndex == currentTargetIndex)
+            nextTargetIndex = Mathf.Clamp(currentTargetIndex - lanesToShift, 0, targets.Length - 1);
+
+        currentTargetIndex = nextTargetIndex;
     }
-    public void Respawn(int vehicleIndex)
+
+    public void RespawnRandomVehicle(Transform spawnFrom, float speed)
+    {
+        Respawn(spawnFrom, Random.Range(0, vehicles.allVehicles.Length), speed);
+    }
+    public void Respawn(Transform spawnFrom, int vehicleIndex, float speed)
     {
         currentTargetIndex = defaultTargetIndex;
 
         vehicles.SetVehicle(Mathf.Clamp(vehicleIndex, 0, vehicles.allVehicles.Length));
         vehicles.currentVehicle.castRays = true;
 
-        spawnSpeed = Random.Range(speedLimit - 5, speedLimit + 5);
+        spawnSpeed = speed;
 
         //spawnedFromRear = true;
-        Transform spawnFrom = rearSpawn;
+        /*Transform spawnFrom = rearSpawn;
         var followVehicle = keepUpWith?.GetVehicle();
         if (followVehicle != null)
         {
@@ -165,12 +177,16 @@ public class BotDriver : MonoBehaviour, AbstractDriver
                 spawnFrom = frontSpawn;
                 //spawnedFromRear = false;
             }
-        }
+        }*/
         vehicles.currentVehicle.Teleport(spawnFrom.position, spawnFrom.rotation, spawnSpeed);
     }
 
     public CarPhysics GetVehicle()
     {
         return vehicles.currentVehicle;
+    }
+    public Carability GetCarability()
+    {
+        return carability;
     }
 }

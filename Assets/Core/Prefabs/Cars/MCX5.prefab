@@ -2027,7 +2027,7 @@ MonoBehaviour:
   wheelRL: {fileID: 3360367382887843476}
   wheelRR: {fileID: 6780085509469936593}
   wheelGroundDistance: 1
-  vehicleStats: {fileID: 11400000, guid: 9ba039562f505374eb2e36502b713cfb, type: 2}
+  vehicleStats: {fileID: 11400000, guid: e68ef28dbfae2094a812d7369d3614a8, type: 2}
   gas: 0
   brake: 0
   steer: 0
@@ -2120,7 +2120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fde3b0a987d9ab4ba8272b85857ae03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  centerOfMassOffset: {x: 0, y: -0.3, z: 0}
+  centerOfMassOffset: {x: 0, y: -0.58, z: 0}
   showCOM: 1
 --- !u!1 &2055582746002203729
 GameObject:

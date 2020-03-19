@@ -14,6 +14,13 @@ public class Carability : MonoBehaviour
     public float scansPerSecond = 0.25f;
     private float lastScan = float.MinValue;
 
+    private readonly float[] sirenDistances = new float[] { -1, 15, 30, 60 };
+    public bool siren;
+    public int sirenLevel;
+    public float sirenScansPerSecond = 0.25f;
+    private float lastSirenScan = float.MinValue;
+
+
     private void Start()
     {
         license = GetRandomLicense();
@@ -21,8 +28,24 @@ public class Carability : MonoBehaviour
     private void Update()
     {
         LicenseScanner();
+        Siren();
     }
 
+    private void Siren()
+    {
+        if (siren && Time.time - lastSirenScan >= (1 / sirenScansPerSecond))
+        {
+            int currentSirenScanLevel = Mathf.Clamp(sirenLevel, 0, sirenDistances.Length - 1);
+            float scanDistance = sirenDistances[currentSirenScanLevel];
+            if (scanDistance > 0)
+            {
+                var driver = GetDriverInFront(scanDistance);
+                if (driver != null && driver is BotDriver)
+                    ((BotDriver)driver).ChangeLane();
+            }
+            lastSirenScan = Time.time;
+        }
+    }
     private void LicenseScanner()
     {
         if (scan && Time.time - lastScan >= (1 / scansPerSecond))
@@ -43,16 +66,11 @@ public class Carability : MonoBehaviour
     {
         bool hit = false;
 
-        Vector3 centerPoint = self.currentVehicle.GetPointOnBoundsBorder(0, 0, 0);
-        RaycastHit hitInfo;
-        if (Physics.Raycast(centerPoint, self.currentVehicle.vehicleRigidbody.transform.forward, out hitInfo, distance))
+        var driver = GetDriverInFront(distance);
+        if (driver != null)
         {
-            var driver = hitInfo.transform.GetComponentInParent<AbstractDriver>();
-            if (driver != null)
-            {
-                Debug.Log(driver.GetCarability().license);
-                hit = true;
-            }
+            Debug.Log(driver.GetCarability().license);
+            hit = true;
         }
 
         return hit;
@@ -70,6 +88,18 @@ public class Carability : MonoBehaviour
         }
 
         return nearbyVehicles.Length;
+    }
+
+    public AbstractDriver GetDriverInFront(float distance = 15)
+    {
+        AbstractDriver driver = null;
+        Vector3 centerPoint = self.currentVehicle.GetPointOnBoundsBorder(0, 0, 0);
+        RaycastHit hitInfo;
+        if (Physics.Raycast(centerPoint, self.currentVehicle.vehicleRigidbody.transform.forward, out hitInfo, distance))
+        {
+            driver = hitInfo.transform.GetComponentInParent<AbstractDriver>();
+        }
+        return driver;
     }
     public AbstractDriver[] GetSurroundingDrivers(float diameter = 15)
     {

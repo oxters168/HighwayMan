@@ -13,6 +13,8 @@ public class NWHWheel : AbstractWheel
     public override void SetGrip(float value)
     {
         wheel.forwardFriction.forceCoefficient = value;
+        wheel.forwardFriction.slipCoefficient = value;
         wheel.sideFriction.forceCoefficient = value;
+        wheel.sideFriction.slipCoefficient = value;
     }
 }

@@ -33,7 +33,7 @@ public class CarCameraBridge : MonoBehaviour
             cameraMosaic.BlockSize = Mathf.Lerp(closeMosaicValue, farMosaicValue, orthoPercent);
 
             followCamera.target = vehicle.transform;
-            speedGauge.text = MathHelpers.SetDecimalPlaces(vehicle.currentForwardSpeed, 2).ToString();
+            speedGauge.text = MathHelpers.SetDecimalPlaces(vehicle.GetSpeedInKMH(), 2).ToString();
         }
     }
 

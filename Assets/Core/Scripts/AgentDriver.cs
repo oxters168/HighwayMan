@@ -28,12 +28,16 @@ public class AgentDriver : Agent, AbstractDriver
     [Tooltip("Minimum distance for another object to be to the agent's vehicle for the agent to fail")]
     public float collideDistance = 0.2f;
 
+    [Space(10), Tooltip("The max the agent is allowed to steer")]
+    public float maxSteer = 0.5f;
+
     [Space(10)]
     public float distanceHP = 1;
     public float speedHP = 1;
     public float reachHP = 5;
     public float collisionHP = 5;
     public float flipHP = 5;
+    public float steerHP = 1000000;
 
     private float startDistance;
     //private float prevDistance;
@@ -73,12 +77,15 @@ public class AgentDriver : Agent, AbstractDriver
         //AddVectorObs(vehicles.currentVehicle.transform.rotation.eulerAngles.y);
         AddVectorObs(target.position.x);
         AddVectorObs(target.position.z);
-        Vector3 targetDirection = (target.position - vehicles.currentVehicle.vehicleRigidbody.transform.position).normalized;
-        float targetAngle = Vector3.SignedAngle(targetDirection, vehicles.currentVehicle.vehicleRigidbody.transform.forward, vehicles.currentVehicle.vehicleRigidbody.transform.up);
-        AddVectorObs(targetAngle);
+        //Vector3 targetDirection = (target.position - vehicles.currentVehicle.vehicleRigidbody.transform.position).normalized;
+        //float targetAngle = Vector3.SignedAngle(targetDirection, vehicles.currentVehicle.vehicleRigidbody.transform.forward, vehicles.currentVehicle.vehicleRigidbody.transform.up);
+        //AddVectorObs(targetAngle);
+        AddVectorObs(vehicles.currentVehicle.transform.rotation);
 
         AddVectorObs(vehicles.currentVehicle.currentForwardSpeed);
         //AddVectorObs(targetSpeed);
+
+        AddVectorObs(vehicles.index);
 
         var hitInfos = GetHitInfos();
         foreach (var hitInfo in hitInfos)
@@ -90,7 +97,7 @@ public class AgentDriver : Agent, AbstractDriver
     public override void AgentAction(float[] vectorAction)
     {
         vehicles.currentVehicle.gas = vectorAction[0];
-        //vehicles.currentVehicle.steer = vectorAction[1];
+        vehicles.currentVehicle.steer = vectorAction[1] * maxSteer;
 
         var vehicleRigidbody = vehicles.currentVehicle.vehicleRigidbody;
 
@@ -101,7 +108,7 @@ public class AgentDriver : Agent, AbstractDriver
         //Reset on reach target
         if (currentDistance <= reachDistance)
         {
-            //SetReward(reachHP);
+            SetReward(reachHP);
             //Debug.Log("Reached target");
             Done();
         }
@@ -135,7 +142,7 @@ public class AgentDriver : Agent, AbstractDriver
             }
             else
             {
-                Vector3 targetDirection = (target.position - vehicleRigidbody.transform.position).normalized;
+                /*Vector3 targetDirection = (target.position - vehicleRigidbody.transform.position).normalized;
                 float targetDirectionPercent = vehicleRigidbody.velocity.PercentDirection(targetDirection);
                 var currentTargetDirectionSpeed = vehicles.currentVehicle.currentTotalSpeed * targetDirectionPercent;
                 if (currentTargetDirectionSpeed < 0.05f && currentTargetDirectionSpeed > -0.05f)
@@ -146,13 +153,28 @@ public class AgentDriver : Agent, AbstractDriver
                     //reward = -speedHP;
                     reward = -Mathf.Pow(currentTargetDirectionSpeed - 1, 2);
 
-                float targetAngle = Vector3.Angle(targetDirection, vehicleRigidbody.transform.forward);
+                float targetAngle = Vector3.Angle(targetDirection, vehicleRigidbody.transform.forward);*/
                 //Debug.Log("Current reward: " + reward + " current target directional speed: " + currentTargetDirectionSpeed);
                 //accumulatedDistance += currentDistance * currentDistance;
                 //if (targetAngle > maxTargetOffsetAngle || currentTargetDirectionSpeed < -speedHP)
                 //    Done();
                 //else
-                    SetReward(reward);
+                //Debug.Log(reward);
+                    //SetReward(reward);
+                //SetReward(-1);
+
+                //float steerPenalty = 0;
+                //Vector3 targetDirection = (target.position - vehicles.currentVehicle.vehicleRigidbody.transform.position).normalized;
+                //float targetAngle = Vector3.SignedAngle(targetDirection, vehicles.currentVehicle.vehicleRigidbody.transform.forward, vehicles.currentVehicle.vehicleRigidbody.transform.up);
+                //if (targetAngle > 0 && (vehicles.currentVehicle.currentForwardSpeed > 0 && vehicles.currentVehicle.steer > 0) || (vehicles.currentVehicle.currentForwardSpeed < 0 && vehicles.currentVehicle.steer < 0))
+                //    steerPenalty = -steerHP; //penalize
+                //else if (targetAngle < 0 && (vehicles.currentVehicle.currentForwardSpeed > 0 && vehicles.currentVehicle.steer < 0) || (vehicles.currentVehicle.currentForwardSpeed < 0 && vehicles.currentVehicle.steer > 0))
+                //    steerPenalty = -steerHP; //penalize
+
+                float distancePenalty = -(currentDistance / startDistance);
+                if (Application.isEditor)
+                    Debug.Log(distancePenalty);
+                SetReward(distancePenalty / maxStep);
             }
         }
     }
@@ -181,7 +203,9 @@ public class AgentDriver : Agent, AbstractDriver
         Vector3 targetDirection = (target.position - randomPosition).normalized;
         float targetAngle = Quaternion.LookRotation(targetDirection, Vector3.up).eulerAngles.y;
         var randomRotation = Quaternion.Euler(0, targetAngle + maxTargetOffsetAngle * (Random.value * 2 - 1), 0);
-        vehicles.currentVehicle.Teleport(transform.TransformPoint(randomPosition), transform.TransformRotation(randomRotation));
+        //float randomSpeed = Random.Range(-vehicles.currentVehicle.vehicleStats.maxReverseSpeed, vehicles.currentVehicle.vehicleStats.maxForwardSpeed);
+        float randomSpeed = 0;
+        vehicles.currentVehicle.Teleport(transform.TransformPoint(randomPosition), transform.TransformRotation(randomRotation), randomSpeed);
     }
     private void ResetTarget()
     {

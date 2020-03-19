@@ -82,3 +82,6 @@ Assets/ML-Agents/*
 
 Assets/FastNoise Unity/*
 !Assets/FastNoise Unity/.gitkeep
+
+Assets/Imported/Toon Particles - Fire Collection/*
+!Assets/Imported/Toon Particles - Fire Collection/.gitkeep

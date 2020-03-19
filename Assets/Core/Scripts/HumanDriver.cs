@@ -22,6 +22,7 @@ public class HumanDriver : MonoBehaviour, AbstractDriver
             vehicles.currentVehicle.steer = player.GetAxis("Steer");
 
             carability.scan = player.GetButton("Scan");
+            carability.siren = player.GetButton("Siren");
         }
     }
 

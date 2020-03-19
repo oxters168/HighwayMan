@@ -121,6 +121,7 @@ public class CarSpawner : MonoBehaviour
         botCars.Get<BotDriver>((bot) =>
         {
             bot.RespawnRandomVehicle(spawnPoint, speed);
+            bot.GetVehicle().vehicleHealth.HealPercent(1);
             //bot.GetCarability().RandomizeLicense();
             bot.targets = targets;
             bot.currentTargetIndex = targetIndex;

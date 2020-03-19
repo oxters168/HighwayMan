@@ -56,6 +56,9 @@ MonoBehaviour:
   scan: 0
   scanLevel: 0
   scansPerSecond: 0.25
+  siren: 0
+  sirenLevel: 0
+  sirenScansPerSecond: 0.25
 --- !u!114 &3641802625896976552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87,11 +90,13 @@ MonoBehaviour:
   closestToZeroTargetSpeed: 5
   reachDistance: 5
   collideDistance: 1
+  maxSteer: 1
   distanceHP: 1
   speedHP: 10
-  reachHP: 1000
+  reachHP: 1
   collisionHP: 1000
   flipHP: 1000
+  steerHP: 0.5
 --- !u!114 &3641802625896976556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,9 +128,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    vectorObservationSize: 10
+    vectorObservationSize: 14
     numStackedVectorObservations: 1
-    vectorActionSize: 01000000
+    vectorActionSize: 02000000
     vectorActionDescriptions: []
     vectorActionSpaceType: 1
   m_Model: {fileID: 0}
@@ -227,6 +232,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 77846376ea5b9354590a047d142769ad,
         type: 2}
+    - target: {fileID: 6469593765790594910, guid: 23ce93d683fa3f945a086b04e8fabe17,
+        type: 3}
+      propertyPath: healthAffectsAcceleration
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 23ce93d683fa3f945a086b04e8fabe17, type: 3}
 --- !u!4 &6188357063494613224 stripped
@@ -325,6 +335,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 0f524298d99f8e24d814482d8ba7d8f8,
         type: 2}
+    - target: {fileID: 6554993137502184669, guid: 623928aa8ec3c8d449d84bb51e46bccd,
+        type: 3}
+      propertyPath: healthAffectsAcceleration
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 623928aa8ec3c8d449d84bb51e46bccd, type: 3}
 --- !u!4 &318804112672954482 stripped
@@ -423,6 +438,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: e68ef28dbfae2094a812d7369d3614a8,
         type: 2}
+    - target: {fileID: 4383924398627152002, guid: 5cb9c7cbc2e142b4b91894d975ca6021,
+        type: 3}
+      propertyPath: healthAffectsAcceleration
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5cb9c7cbc2e142b4b91894d975ca6021, type: 3}
 --- !u!4 &3660756144423524328 stripped
@@ -456,6 +476,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 0f524298d99f8e24d814482d8ba7d8f8,
         type: 2}
+    - target: {fileID: 89114528421680640, guid: 8fecde0364096544c8bdf01d54908c35,
+        type: 3}
+      propertyPath: healthAffectsAcceleration
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1178231648011220868, guid: 8fecde0364096544c8bdf01d54908c35,
         type: 3}
       propertyPath: fFriction.slipCoefficient

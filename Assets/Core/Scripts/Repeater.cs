@@ -10,34 +10,50 @@ public class Repeater : MonoBehaviour
     public float size = 50;
     public float offset = 25;
 
-    [Tooltip("Every Nth road part place a parking")]
-    public int parkingEveryNth = 5;
-
+    [Space(10)]
     public Transform pointsOfInterest;
 
+    [Space(10), Tooltip("Every Nth road part place a parking")]
+    public int parkingEveryNth = 5;
+    [Tooltip("Probability of building to appear, index corresponds to BuildingController.BuildingType enum")]
+    public float[] buildingOdds;
+
+    private FastNoise buildingsNoise;
+
+    private int previousIndex = int.MinValue;
+
+    private void Start()
+    {
+        buildingsNoise = new FastNoise((int)System.DateTime.UtcNow.Ticks);
+    }
     void Update()
     {
         int index = Mathf.CeilToInt((target.position.z - offset) / size);
-        int extraFrontIndex = index + 2;
-        int frontIndex = index + 1;
-        int midIndex = index;
-        int rearIndex = index - 1;
-        int extraRearIndex = index - 2;
 
-        //SetRoadType(extraFront, extraFrontIndex);
-        SetRoadType(front, frontIndex);
-        SetRoadType(mid, midIndex);
-        SetRoadType(rear, rearIndex);
-        //SetRoadType(extraRear, extraRearIndex);
+        if (index != previousIndex)
+        {
+            previousIndex = index;
 
-        extraFront.transform.position = new Vector3(extraFront.transform.position.x, extraFront.transform.position.y, extraFrontIndex * size);
-        front.transform.position = new Vector3(front.transform.position.x, front.transform.position.y, frontIndex * size);
-        mid.transform.position = new Vector3(mid.transform.position.x, mid.transform.position.y, midIndex * size);
-        rear.transform.position = new Vector3(rear.transform.position.x, rear.transform.position.y, rearIndex * size);
-        extraRear.transform.position = new Vector3(extraRear.transform.position.x, extraRear.transform.position.y, extraRearIndex * size);
+            int extraFrontIndex = index + 2;
+            int frontIndex = index + 1;
+            int midIndex = index;
+            int rearIndex = index - 1;
+            int extraRearIndex = index - 2;
 
-        if (pointsOfInterest != null)
-            pointsOfInterest.position = new Vector3(pointsOfInterest.position.x, pointsOfInterest.position.y, midIndex * size);
+            SetRoadType(front, frontIndex);
+            SetRoadType(mid, midIndex);
+            SetRoadType(rear, rearIndex);
+
+            extraFront.transform.position = new Vector3(extraFront.transform.position.x, extraFront.transform.position.y, extraFrontIndex * size);
+            front.transform.position = new Vector3(front.transform.position.x, front.transform.position.y, frontIndex * size);
+            mid.transform.position = new Vector3(mid.transform.position.x, mid.transform.position.y, midIndex * size);
+            rear.transform.position = new Vector3(rear.transform.position.x, rear.transform.position.y, rearIndex * size);
+            extraRear.transform.position = new Vector3(extraRear.transform.position.x, extraRear.transform.position.y, extraRearIndex * size);
+
+            if (pointsOfInterest != null)
+                pointsOfInterest.position = new Vector3(pointsOfInterest.position.x, pointsOfInterest.position.y, midIndex * size);
+
+        }
     }
 
     private void SetRoadType(RoadPart road, int roadIndex)
@@ -47,12 +63,30 @@ public class Repeater : MonoBehaviour
 
         if (roadIndex % parkingEveryNth == 0)
         {
-            if ((roadIndex / parkingEveryNth) % 2 == 0)
+            int parkingIndex = roadIndex / parkingEveryNth;
+            if (parkingIndex % 2 == 0)
                 roadType = RoadPart.RoadType.parkingOnRight;
             else
                 roadType = RoadPart.RoadType.parkingOnLeft;
 
-            buildingType = BuildingController.BuildingType.policeStation;
+            #region Pick building
+            float buildingRng = (buildingsNoise.GetWhiteNoiseInt(parkingIndex, 199) + 1) / 2;
+            buildingType = BuildingController.BuildingType.none;
+            float lowestPossibleOdd = float.MaxValue;
+            if (buildingOdds != null && buildingOdds.Length == System.Enum.GetNames(typeof(BuildingController.BuildingType)).Length)
+            {
+                for (int i = 0; i < buildingOdds.Length; i++)
+                {
+                    if (buildingRng <= buildingOdds[i] && buildingOdds[i] < lowestPossibleOdd)
+                    {
+                        buildingType = (BuildingController.BuildingType)i;
+                        lowestPossibleOdd = buildingOdds[i];
+                    }
+                }
+            }
+            else
+                Debug.LogError("Repeater(" + gameObject.name + "): Building odds array length should equal to BuildingController.BuildingType length");
+            #endregion
         }
 
         road.SetRoadType(roadType);

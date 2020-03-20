@@ -122,7 +122,7 @@ public class CarSpawner : MonoBehaviour
         {
             bot.RespawnRandomVehicle(spawnPoint, speed);
             bot.GetVehicle().vehicleHealth.HealPercent(1);
-            //bot.GetCarability().RandomizeLicense();
+            bot.GetCarability().RandomizeLicense();
             bot.targets = targets;
             bot.currentTargetIndex = targetIndex;
             bot.onFall += Bot_onFall;

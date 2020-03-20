@@ -171,7 +171,7 @@ public class AgentDriver : Agent, AbstractDriver
                 //else if (targetAngle < 0 && (vehicles.currentVehicle.currentForwardSpeed > 0 && vehicles.currentVehicle.steer < 0) || (vehicles.currentVehicle.currentForwardSpeed < 0 && vehicles.currentVehicle.steer > 0))
                 //    steerPenalty = -steerHP; //penalize
 
-                float distancePenalty = -(currentDistance / startDistance);
+                float distancePenalty = -(currentDistance / (targetSpawnSize.magnitude / 2));
                 if (Application.isEditor)
                     Debug.Log(distancePenalty);
                 SetReward(distancePenalty / maxStep);

@@ -3,7 +3,7 @@ using UnityHelpers;
 
 public class BuildingController : MonoBehaviour
 {
-    public enum BuildingType { none, policeStation, }
+    public enum BuildingType { none, policeStation, shops, }
     [Tooltip("Should follow enum")]
     public GameObject[] buildings;
     public BuildingType buildingType;

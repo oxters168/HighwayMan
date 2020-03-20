@@ -23,7 +23,7 @@ public class Carability : MonoBehaviour
 
     private void Start()
     {
-        license = GetRandomLicense();
+        RandomizeLicense();
     }
     private void Update()
     {
@@ -62,6 +62,12 @@ public class Carability : MonoBehaviour
                 lastScan = Time.time;
         }
     }
+
+    public void RandomizeLicense()
+    {
+        license = GetRandomLicense();
+    }
+
     private bool ScanFrontLicense(float distance = 15)
     {
         bool hit = false;

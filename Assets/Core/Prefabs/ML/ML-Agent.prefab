@@ -74,9 +74,11 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  maxStep: 500
+  maxStep: 5000
   vehicles: {fileID: 3641802625896976556}
   carability: {fileID: 7855827120333006629}
+  track: {fileID: 0}
+  trackPieces: []
   vehicleSpawnCenter: {x: 0, y: 0, z: 0}
   vehicleSpawnSize: {x: 0, y: 0, z: 0}
   vehicleIndex: -1

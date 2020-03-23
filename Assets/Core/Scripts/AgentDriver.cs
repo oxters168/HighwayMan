@@ -7,6 +7,9 @@ public class AgentDriver : Agent, AbstractDriver
     public VehicleSwitcher vehicles;
     public Carability carability;
 
+    public Transform track;
+    public Transform[] trackPieces;
+
     public Vector3 vehicleSpawnCenter, vehicleSpawnSize;
 
     [Tooltip("Setting this value to anything not within the vehicles array will reset agent each time to random vehicle")]
@@ -44,8 +47,17 @@ public class AgentDriver : Agent, AbstractDriver
     private int stepsPassed;
     private float accumulatedDistance;
 
+    private float accumulatedReward;
+    private bool hitSomething;
+
     void Start()
     {
+        //trackPieces = track.GetComponentsInChildren<Transform>();
+        trackPieces = new Transform[track.childCount];
+        int index = 0;
+        foreach (Transform child in track)
+            trackPieces[index++] = child;
+
         //heuristicPlayer = ReInput.players.GetPlayer(heuristicPlayerId);
     }
     private void OnDrawGizmosSelected()
@@ -61,8 +73,9 @@ public class AgentDriver : Agent, AbstractDriver
 
     public override void AgentReset()
     {
-        ResetTarget();
-        ResetVehicle();
+        //ResetTarget();
+        //ResetVehicle();
+        ResetEnvironment();
         RandomizeTargetSpeed();
 
         startDistance = (target.position - vehicles.currentVehicle.transform.position).magnitude;
@@ -140,6 +153,13 @@ public class AgentDriver : Agent, AbstractDriver
             {
                 Done();
             }
+            else if (hitSomething)
+            {
+                hitSomething = false;
+                //SetReward(-1 - accumulatedReward);
+                accumulatedReward = 0;
+                Done();
+            }
             else
             {
                 /*Vector3 targetDirection = (target.position - vehicleRigidbody.transform.position).normalized;
@@ -174,7 +194,9 @@ public class AgentDriver : Agent, AbstractDriver
                 float distancePenalty = -(currentDistance / (targetSpawnSize.magnitude / 2));
                 if (Application.isEditor)
                     Debug.Log(distancePenalty);
-                SetReward(distancePenalty / maxStep);
+                float currentStepPenalty = distancePenalty / maxStep;
+                accumulatedReward += distancePenalty / maxStep;
+                //SetReward(currentStepPenalty);
             }
         }
     }
@@ -186,9 +208,24 @@ public class AgentDriver : Agent, AbstractDriver
         return new float[] { vertical, horizontal };
     }
 
-    private void ResetVehicle()
+    private void ResetEnvironment()
     {
-        //Pick vehicle
+        int targetTrackIndex = Random.Range(0, trackPieces.Length);
+        target.position = trackPieces[targetTrackIndex].position;
+
+        RandomizeVehicle();
+
+        int vehicleTrackIndex = Random.Range(0, trackPieces.Length - 1);
+        if (vehicleTrackIndex == targetTrackIndex)
+            vehicleTrackIndex++;
+
+        vehicles.currentVehicle.Teleport(trackPieces[vehicleTrackIndex].position, trackPieces[vehicleTrackIndex].rotation);
+    }
+    private void RandomizeVehicle()
+    {
+        //Detach from previous vehicle's hit event
+        vehicles.currentVehicle.onHit -= CurrentVehicle_onHit;
+
         currentVehicleIndex = vehicleIndex;
         if (currentVehicleIndex < 0 || currentVehicleIndex >= vehicles.allVehicles.Length)
             currentVehicleIndex = Random.Range(0, vehicles.allVehicles.Length);
@@ -196,6 +233,20 @@ public class AgentDriver : Agent, AbstractDriver
 
         //Make sure we're casting collision rays
         vehicles.currentVehicle.castRays = true;
+
+        //Attach to current vehicle's hit event
+        vehicles.currentVehicle.onHit += CurrentVehicle_onHit;
+    }
+
+    private void CurrentVehicle_onHit(CarPhysics caller, Collision collision)
+    {
+        hitSomething = true;
+    }
+
+    private void ResetVehicle()
+    {
+        //Pick vehicle
+        RandomizeVehicle();
 
         //Teleport vehicle to random position and rotation
         var randomPosition = new Vector3(vehicleSpawnCenter.x + vehicleSpawnSize.x / 2 * GetRandomValue(), vehicleSpawnCenter.y + vehicleSpawnSize.y / 2 * GetRandomValue(), vehicleSpawnCenter.z + vehicleSpawnSize.z / 2 * GetRandomValue());

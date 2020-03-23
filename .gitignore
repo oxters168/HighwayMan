@@ -85,3 +85,18 @@ Assets/FastNoise Unity/*
 
 Assets/Imported/Toon Particles - Fire Collection/*
 !Assets/Imported/Toon Particles - Fire Collection/.gitkeep
+
+Assets/Imported/PolygonHeist/*
+!Assets/Imported/PolygonHeist/.gitkeep
+
+Assets/Imported/Demigiant/DOTween/*
+!Assets/Imported/Demigiant/DOTween/.gitkeep
+
+Assets/Imported/Doozy/*
+!Assets/Imported/Doozy/.gitkeep
+
+Assets/Gizmos/Doozy/*
+!Assets/Gizmos/Doozy/.gitkeep
+
+Assets/Imported/PolygonPrototype/*
+!Assets/Imported/PolygonPrototype/.gitkeep

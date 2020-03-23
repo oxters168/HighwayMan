@@ -3,10 +3,13 @@ using UnityHelpers;
 
 public class BuildingController : MonoBehaviour
 {
-    public enum BuildingType { none, policeStation, shops, }
+    public enum BuildingType { none, policeStation, shops, garage, }
     [Tooltip("Should follow enum")]
     public GameObject[] buildings;
     public BuildingType buildingType;
+
+    private GameObject building;
+    private bool inBuilding;
 
     public event CarEnteredHandler onCarParked;
     public delegate void CarEnteredHandler(CarPhysics car, BuildingType buildingType);
@@ -18,10 +21,19 @@ public class BuildingController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         var car = other.GetComponentInParent<CarPhysics>();
-        if (car != null && buildingType != BuildingType.none)
+        if (car != null && buildingType != BuildingType.none && !inBuilding)
         {
+            building = other.gameObject;
+            inBuilding = true;
             onCarParked?.Invoke(car, buildingType);
-            //Debug.Log(car.name + " entered the building");
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (building == other.gameObject)
+        {
+            inBuilding = false;
+            building = null;
         }
     }
 

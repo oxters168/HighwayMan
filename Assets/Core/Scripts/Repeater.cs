@@ -1,4 +1,8 @@
 ﻿using UnityEngine;
+using UnityHelpers;
+
+[System.Serializable]
+public class OnCarEnteredBuildingEvent : UnityEngine.Events.UnityEvent<CarPhysics, BuildingController.BuildingType> { }
 
 public class Repeater : MonoBehaviour
 {
@@ -22,10 +26,23 @@ public class Repeater : MonoBehaviour
 
     private int previousIndex = int.MinValue;
 
+    [Space(10)]
+    public OnCarEnteredBuildingEvent onCarEnteredBuilding;
+
     private void Start()
     {
         buildingsNoise = new FastNoise((int)System.DateTime.UtcNow.Ticks);
+
+        front.buildings.onCarParked += Buildings_onCarParked; //Shouldn't actually need to do this one since car can't get out of mid anyways
+        mid.buildings.onCarParked += Buildings_onCarParked;
+        rear.buildings.onCarParked += Buildings_onCarParked; //Shouldn't actually need to do this one since car can't get out of mid anyways
     }
+
+    private void Buildings_onCarParked(CarPhysics car, BuildingController.BuildingType buildingType)
+    {
+        onCarEnteredBuilding?.Invoke(car, buildingType);
+    }
+
     void Update()
     {
         int index = Mathf.CeilToInt((target.position.z - offset) / size);

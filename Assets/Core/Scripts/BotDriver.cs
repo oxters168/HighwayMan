@@ -189,4 +189,13 @@ public class BotDriver : MonoBehaviour, AbstractDriver
     {
         return carability;
     }
+    public CarAppearance GetCarAppearance()
+    {
+        return GetComponent<CarAppearance>();
+        //return vehicles.currentVehicle.GetComponentInParent<CarAppearance>();
+    }
+    public CarHUD GetCarHUD()
+    {
+        return GetComponent<CarHUD>();
+    }
 }

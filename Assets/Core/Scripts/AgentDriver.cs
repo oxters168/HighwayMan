@@ -1,11 +1,13 @@
 ﻿using MLAgents;
 using UnityEngine;
 using UnityHelpers;
+using System.Collections.Generic;
 
 public class AgentDriver : Agent, AbstractDriver
 {
     public VehicleSwitcher vehicles;
     public Carability carability;
+    public Transform unitedSensor;
 
     public Transform track;
     public Transform[] trackPieces;
@@ -50,6 +52,9 @@ public class AgentDriver : Agent, AbstractDriver
     private float accumulatedReward;
     private bool hitSomething;
 
+    private List<GameObject> triggered = new List<GameObject>();
+    private float triggerStepReward = 0;
+
     void Start()
     {
         //trackPieces = track.GetComponentsInChildren<Transform>();
@@ -73,9 +78,10 @@ public class AgentDriver : Agent, AbstractDriver
 
     public override void AgentReset()
     {
-        //ResetTarget();
-        //ResetVehicle();
-        ResetEnvironment();
+        ResetTarget();
+        ResetVehicle();
+
+        //ResetEnvironment();
         RandomizeTargetSpeed();
 
         startDistance = (target.position - vehicles.currentVehicle.transform.position).magnitude;
@@ -100,17 +106,22 @@ public class AgentDriver : Agent, AbstractDriver
 
         AddVectorObs(vehicles.index);
 
-        var hitInfos = GetHitInfos();
+        /*var hitInfos = GetHitInfos();
         foreach (var hitInfo in hitInfos)
         {
             float hitDistance = hitInfo.hit ? hitInfo.info.distance : -1;
             AddVectorObs(hitDistance);
-        }
+        }*/
     }
     public override void AgentAction(float[] vectorAction)
     {
-        vehicles.currentVehicle.gas = vectorAction[0];
-        vehicles.currentVehicle.steer = vectorAction[1] * maxSteer;
+        //vehicles.currentVehicle.gas = vectorAction[0];
+        //vehicles.currentVehicle.steer = vectorAction[1] * maxSteer;
+
+        //For discrete action space
+        vehicles.currentVehicle.gas = vectorAction[0] - 1;
+        vehicles.currentVehicle.steer = (vectorAction[1] - 1) * maxSteer;
+        //Debug.Log(vectorAction[0] + ", " + vectorAction[1]);
 
         var vehicleRigidbody = vehicles.currentVehicle.vehicleRigidbody;
 
@@ -180,7 +191,7 @@ public class AgentDriver : Agent, AbstractDriver
                 //    Done();
                 //else
                 //Debug.Log(reward);
-                    //SetReward(reward);
+                //SetReward(reward);
                 //SetReward(-1);
 
                 //float steerPenalty = 0;
@@ -191,12 +202,18 @@ public class AgentDriver : Agent, AbstractDriver
                 //else if (targetAngle < 0 && (vehicles.currentVehicle.currentForwardSpeed > 0 && vehicles.currentVehicle.steer < 0) || (vehicles.currentVehicle.currentForwardSpeed < 0 && vehicles.currentVehicle.steer > 0))
                 //    steerPenalty = -steerHP; //penalize
 
-                float distancePenalty = -(currentDistance / (targetSpawnSize.magnitude / 2));
+                //float distancePenalty = -(currentDistance / (targetSpawnSize.magnitude / 2));
+                float distancePenalty = -(currentDistance / startDistance);
                 if (Application.isEditor)
                     Debug.Log(distancePenalty);
                 float currentStepPenalty = distancePenalty / maxStep;
                 accumulatedReward += distancePenalty / maxStep;
-                //SetReward(currentStepPenalty);
+                SetReward(currentStepPenalty);
+
+                //if (Application.isEditor && triggerStepReward > 0)
+                //    Debug.Log(triggerStepReward);
+                //SetReward(triggerStepReward);
+                //triggerStepReward = 0;
             }
         }
     }
@@ -208,8 +225,50 @@ public class AgentDriver : Agent, AbstractDriver
         return new float[] { vertical, horizontal };
     }
 
+    private void CurrentVehicle_onHit(CarPhysics caller, Collision collision)
+    {
+        hitSomething = true;
+    }
+    private void CurrentVehicle_onTrigger(CarPhysics caller, Collider other)
+    {
+        if (!triggered.Contains(other.gameObject))
+        {
+            if (triggered.Count > 0)
+                triggerStepReward += 1f / maxStep;
+
+            triggered.Add(other.gameObject);
+        }
+    }
+
+    private void RandomizeVehicle()
+    {
+        //Detach from previous vehicle's hit event
+        if (vehicles.currentVehicle != null)
+        {
+            vehicles.currentVehicle.onHit -= CurrentVehicle_onHit;
+            vehicles.currentVehicle.onTrigger -= CurrentVehicle_onTrigger;
+        }
+
+        currentVehicleIndex = vehicleIndex;
+        if (currentVehicleIndex < 0 || currentVehicleIndex >= vehicles.allVehicles.Length)
+            currentVehicleIndex = Random.Range(0, vehicles.allVehicles.Length);
+        vehicles.SetVehicle(currentVehicleIndex);
+
+        //Parent raycast sensor to new vehicle
+        unitedSensor.SetParent(vehicles.currentVehicle.vehicleRigidbody.transform, false);
+
+        //Make sure we're casting collision rays
+        //vehicles.currentVehicle.castRays = true;
+
+        //Attach to current vehicle's hit event
+        vehicles.currentVehicle.onHit += CurrentVehicle_onHit;
+        vehicles.currentVehicle.onTrigger += CurrentVehicle_onTrigger;
+    }
+
     private void ResetEnvironment()
     {
+        triggered.Clear();
+
         int targetTrackIndex = Random.Range(0, trackPieces.Length);
         target.position = trackPieces[targetTrackIndex].position;
 
@@ -220,27 +279,6 @@ public class AgentDriver : Agent, AbstractDriver
             vehicleTrackIndex++;
 
         vehicles.currentVehicle.Teleport(trackPieces[vehicleTrackIndex].position, trackPieces[vehicleTrackIndex].rotation);
-    }
-    private void RandomizeVehicle()
-    {
-        //Detach from previous vehicle's hit event
-        vehicles.currentVehicle.onHit -= CurrentVehicle_onHit;
-
-        currentVehicleIndex = vehicleIndex;
-        if (currentVehicleIndex < 0 || currentVehicleIndex >= vehicles.allVehicles.Length)
-            currentVehicleIndex = Random.Range(0, vehicles.allVehicles.Length);
-        vehicles.SetVehicle(currentVehicleIndex);
-
-        //Make sure we're casting collision rays
-        vehicles.currentVehicle.castRays = true;
-
-        //Attach to current vehicle's hit event
-        vehicles.currentVehicle.onHit += CurrentVehicle_onHit;
-    }
-
-    private void CurrentVehicle_onHit(CarPhysics caller, Collision collision)
-    {
-        hitSomething = true;
     }
 
     private void ResetVehicle()
@@ -284,9 +322,17 @@ public class AgentDriver : Agent, AbstractDriver
     {
         return vehicles.currentVehicle;
     }
-
     public Carability GetCarability()
     {
         return carability;
+    }
+    public CarAppearance GetCarAppearance()
+    {
+        return GetComponent<CarAppearance>();
+        //return vehicles.currentVehicle.GetComponentInParent<CarAppearance>();
+    }
+    public CarHUD GetCarHUD()
+    {
+        return GetComponent<CarHUD>();
     }
 }

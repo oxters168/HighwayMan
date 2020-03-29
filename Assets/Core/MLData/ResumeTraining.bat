@@ -1,3 +1,3 @@
 @echo off
-mlagents-learn ./config/trainer_config.yaml --env=HighwayMan --run-id=AgentDriver --train --load
+mlagents-learn ./config/trainer_config.yaml --run-id=AgentDriver --train --load
 pause

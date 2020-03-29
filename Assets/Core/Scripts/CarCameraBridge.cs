@@ -11,12 +11,20 @@ public class CarCameraBridge : MonoBehaviour
     private GameObject prevVehicleGO;
 
     public OrbitCameraController followCamera;
-    public TextMeshProUGUI speedGauge;
+    public GaugeController speedGauge;
+    //public TextMeshProUGUI speedGauge;
 
+    [Space(10)]
     public MosaicsPE cameraMosaic;
     public float closeMosaicValue = 15, farMosaicValue = 5;
+    [Space(10)]
+    public float orthoMinSize = 10;
+    public float orthoMaxSize = 50;
     public float orthoLerp = 5;
-    public float orthoMinSize = 10, orthoMaxSize = 50;
+    [Space(10)]
+    public bool rotateWithVehicle;
+    public float rightAngle;
+    public float upAngleOffset;
 
     void Update()
     {
@@ -33,7 +41,17 @@ public class CarCameraBridge : MonoBehaviour
             cameraMosaic.BlockSize = Mathf.Lerp(closeMosaicValue, farMosaicValue, orthoPercent);
 
             followCamera.target = vehicle.transform;
-            speedGauge.text = MathHelpers.SetDecimalPlaces(vehicle.GetSpeedInKMH(), 2).ToString();
+            followCamera.rightAngle = rightAngle;
+            followCamera.upAngle = (rotateWithVehicle ? vehicle.vehicleRigidbody.transform.rotation.eulerAngles.y : 0) + upAngleOffset;
+
+            if (speedGauge != null)
+            {
+                float rawDiff = vehicle.vehicleStats.maxForwardSpeed * MathHelpers.MPS_TO_KMH / (speedGauge.markCount + 0);
+                int diff = Mathf.CeilToInt(rawDiff / 10) * 10;
+                speedGauge.markDiff = diff;
+                speedGauge.value = Mathf.Abs(vehicle.GetSpeedInKMH()) / speedGauge.lastMarkValue;
+                //speedGauge.text = MathHelpers.SetDecimalPlaces(vehicle.GetSpeedInKMH(), 2).ToString();
+            }
         }
     }
 

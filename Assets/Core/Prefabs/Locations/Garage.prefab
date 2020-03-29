@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d492a30292c502459bff1de6ba50335, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BlockSize: 15
+  BlockSize: 12
   Shader: {fileID: 4800000, guid: 830bfccb218141b48b8bcf4756a3853f, type: 3}
 --- !u!1 &66793350270486121
 GameObject:

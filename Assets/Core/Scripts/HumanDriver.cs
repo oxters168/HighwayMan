@@ -23,6 +23,9 @@ public class HumanDriver : MonoBehaviour, AbstractDriver
 
             carability.scan = player.GetButton("Scan");
             carability.siren = player.GetButton("Siren");
+            carability.capture = player.GetButton("Capture");
+            carability.cycleNextTarget = player.GetButtonDown("CycleNext") || player.GetButtonShortPress("CycleNext");
+            carability.cyclePreviousTarget = player.GetButtonDown("CyclePrev") || player.GetButtonShortPress("CyclePrev");
         }
     }
 
@@ -33,5 +36,14 @@ public class HumanDriver : MonoBehaviour, AbstractDriver
     public Carability GetCarability()
     {
         return carability;
+    }
+    public CarAppearance GetCarAppearance()
+    {
+        return GetComponent<CarAppearance>();
+        //return vehicles.currentVehicle.GetComponentInParent<CarAppearance>();
+    }
+    public CarHUD GetCarHUD()
+    {
+        return GetComponent<CarHUD>();
     }
 }

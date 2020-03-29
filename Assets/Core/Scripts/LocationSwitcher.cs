@@ -11,7 +11,7 @@ public class LocationSwitcher : MonoBehaviour
         var driver = vehicle.GetComponentInParent<AbstractDriver>();
         if (driver != null && driver is HumanDriver)
         {
-            locationManager.SetLocation((int)buildingType);
+            //locationManager.SetLocation((int)buildingType);
             Doozy.Engine.GameEventMessage.SendEvent(locationDoozyEvents[(int)buildingType]);
         }
     }

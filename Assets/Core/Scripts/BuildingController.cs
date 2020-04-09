@@ -7,9 +7,10 @@ public class BuildingController : MonoBehaviour
     [Tooltip("Should follow enum")]
     public GameObject[] buildings;
     public BuildingType buildingType;
+    public Transform exitPosition;
 
-    private GameObject building;
-    private bool inBuilding;
+    //private GameObject building;
+    //private bool inBuilding;
 
     public event CarEnteredHandler onCarParked;
     public delegate void CarEnteredHandler(CarPhysics car, BuildingType buildingType);
@@ -21,21 +22,22 @@ public class BuildingController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         var car = other.GetComponentInParent<CarPhysics>();
-        if (car != null && buildingType != BuildingType.none && !inBuilding)
+        if (car != null && buildingType != BuildingType.none)
         {
-            building = other.gameObject;
-            inBuilding = true;
+            //building = other.gameObject;
+            //inBuilding = true;
             onCarParked?.Invoke(car, buildingType);
+            car.Teleport(exitPosition.position, exitPosition.rotation);
         }
     }
-    private void OnTriggerExit(Collider other)
-    {
-        if (building == other.gameObject)
-        {
-            inBuilding = false;
-            building = null;
-        }
-    }
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (building == other.gameObject)
+    //    {
+            //inBuilding = false;
+            //building = null;
+    //    }
+    //}
 
     public void SetBuildingType(BuildingController.BuildingType value)
     {

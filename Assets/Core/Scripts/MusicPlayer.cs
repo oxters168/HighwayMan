@@ -12,12 +12,13 @@ public class MusicPlayer : MonoBehaviour
     private int prevMusicIndex = -1;
 
     public AudioClip[] musicClips;
-    private AudioSource musicSource;
+    private AudioSource musicSource { get { if (_musicSource == null) _musicSource = GetComponent<AudioSource>(); return _musicSource; } }
+    private AudioSource _musicSource;
 
     void Awake()
     {
         musicPlayerInScene = this;
-        musicSource = GetComponent<AudioSource>();
+        //musicSource = GetComponent<AudioSource>();
     }
     void Update()
     {

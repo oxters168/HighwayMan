@@ -3,7 +3,8 @@ using UnityHelpers;
 
 public class CarSpawner : MonoBehaviour
 {
-    private ObjectPool<Transform> botCars;
+    private ObjectPool<Transform> BotCars { get { if (_botCars == null) _botCars = PoolManager.GetPool("Bots"); return _botCars; } }
+    private ObjectPool<Transform> _botCars;
 
     [Tooltip("Will check speed and spawn traffic based on this driver (should implement AbstractDriver)")]
     public GameObject adjustTrafficTo;
@@ -17,26 +18,12 @@ public class CarSpawner : MonoBehaviour
     [Tooltip("No touchie")]
     public int currentSpawnedVehicleCount;
 
-    public Color[] randomVehicleColorOptions;
+    public ColorPercentage[] randomVehicleColorOptions;
 
     [Tooltip("In m/s")]
     public float speedLimit = 27.78f;
     [Tooltip("How much deviation is allowed from speed limit")]
     public float maxLimitDeviation = 5;
-
-    [Space(10)]
-    public bool debugNoise;
-    public int seed = 1337;
-    public float posY = 10;
-    public float offsetX = 0, offsetY = 0;
-    public int columns = 10, rows = 10;
-    public float size = 1;
-    public float frequency = 1;
-    public FastNoise.NoiseType noiseType;
-    public FastNoise.FractalType fractalType;
-    public float fractalGain = 0;
-    public float fractalLacunarity = 0;
-    public int fractalOctaves = 0;
 
     [Space(10), Tooltip("The number of lanes of each road")]
     public int halfRoadLaneCount = 5;
@@ -49,42 +36,12 @@ public class CarSpawner : MonoBehaviour
 
     private void Awake()
     {
-        botCars = PoolManager.GetPool("Bots");
+        //botCars = PoolManager.GetPool("Bots");
         driverToAdjustTrafficTo = adjustTrafficTo.GetComponent<AbstractDriver>();
     }
     private void Update()
     {
         SpawnTraffic();
-    }
-    private void OnDrawGizmos()
-    {
-        if (debugNoise)
-        {
-            var fn = GetTrafficNoise();
-            for (int col = 0; col < columns; col++)
-            {
-                for (int row = 0; row < rows; row++)
-                {
-                    float posX = col * size;
-                    float posZ = row * size;
-                    float colorLerp = fn.GetNoise(posX + offsetX, posZ + offsetY);
-                    Gizmos.color = new Color(colorLerp, colorLerp, colorLerp);
-                    Gizmos.DrawCube(new Vector3(posX, posY, posZ), Vector3.one * size);
-                }
-            }
-        }
-    }
-
-    private FastNoise GetTrafficNoise()
-    {
-        FastNoise fn = new FastNoise(seed);
-        fn.SetFrequency(frequency);
-        fn.SetNoiseType(noiseType);
-        fn.SetFractalType(fractalType);
-        fn.SetFractalGain(fractalGain);
-        fn.SetFractalLacunarity(fractalLacunarity);
-        fn.SetFractalOctaves(fractalOctaves);
-        return fn;
     }
 
     private void SpawnTraffic()
@@ -136,7 +93,7 @@ public class CarSpawner : MonoBehaviour
         currentSpawnedVehicleCount++;
         lastSpawn = Time.time;
 
-        return botCars.Get<BotDriver>((bot) =>
+        return BotCars.Get<BotDriver>((bot) =>
         {
             Color vehicleColor;
 
@@ -150,7 +107,7 @@ public class CarSpawner : MonoBehaviour
             {
                 bot.RespawnRandomVehicle(spawnPoint.position, spawnPoint.rotation, speed);
                 bot.GetCarability().RandomizeLicense();
-                vehicleColor = randomVehicleColorOptions[Random.Range(0, randomVehicleColorOptions.Length)];
+                vehicleColor = ColorPercentage.PickColor(randomVehicleColorOptions).color;
             }
 
             var carAppearance = bot.GetCarAppearance();
@@ -169,7 +126,7 @@ public class CarSpawner : MonoBehaviour
     {
         currentSpawnedVehicleCount--;
         caller.onFall -= Bot_onFall;
-        botCars.Return(caller.transform);
+        BotCars.Return(caller.transform);
     }
 
     private static Transform[] GetTargets(Transform[] roadPoints, int laneCount)

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityHelpers;
 
 public class BountyTracker : MonoBehaviour
 {
@@ -9,8 +10,8 @@ public class BountyTracker : MonoBehaviour
     public Repeater highway;
     public CarSpawner carSpawner;
 
-    public Color[] randomVehicleColorOptions;
-    public int carTypes;
+    public CarStats[] whiteListedVehicles;
+    public ColorPercentage[] randomVehicleColorOptions;
     public int activeBountyCount = 5;
     public int minBounty = 50, maxBounty = 100;
 
@@ -86,8 +87,8 @@ public class BountyTracker : MonoBehaviour
         {
             carData = new CarData
             {
-                vehicleColor = randomVehicleColorOptions[Random.Range(0, randomVehicleColorOptions.Length)],
-                vehicleIndex = (uint)Random.Range(0, carTypes),
+                vehicleColor = ColorPercentage.PickColor(randomVehicleColorOptions).color,
+                vehicleIndex = (uint)whiteListedVehicles[Random.Range(0, whiteListedVehicles.Length)].index,
                 vehicleLicense = Carability.GetRandomLicense(),
             },
             reward = (uint)Random.Range(minBounty, maxBounty + 1),

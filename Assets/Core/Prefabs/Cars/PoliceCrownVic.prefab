@@ -1662,7 +1662,7 @@ MonoBehaviour:
   wheelRL: {fileID: 4542385299736647803}
   wheelRR: {fileID: 1765869175181679709}
   wheelGroundDistance: 1
-  vehicleStats: {fileID: 11400000, guid: 0f524298d99f8e24d814482d8ba7d8f8, type: 2}
+  vehicleStats: {fileID: 11400000, guid: e16dd6c90e3d48a46aaaf2aaaa282fd2, type: 2}
   healthAffectsAcceleration: 1
   forwardSpeedMod: 0
   reverseSpeedMod: 0

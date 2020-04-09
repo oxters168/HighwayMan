@@ -547,7 +547,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &93120467
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7541,7 +7541,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &735438151
 GameObject:
@@ -7647,7 +7647,7 @@ MonoBehaviour:
   wheelRL: {fileID: 0}
   wheelRR: {fileID: 0}
   wheelGroundDistance: 0.8
-  vehicleStats: {fileID: 11400000, guid: a8cac4e1b20479d4098fe184b17e8ec2, type: 2}
+  vehicleStats: {fileID: 0}
   healthAffectsAcceleration: 0
   forwardSpeedMod: 0
   reverseSpeedMod: 0
@@ -7674,7 +7674,7 @@ Transform:
   - {fileID: 735438152}
   - {fileID: 451549803}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &788306278
 GameObject:
@@ -16678,7 +16678,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1135014503
 GameObject:
@@ -17626,6 +17626,63 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &1184398032
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1184398034}
+  - component: {fileID: 1184398033}
+  m_Layer: 0
+  m_Name: BountySpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1184398033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184398032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5594172a0a4e4a64380e73f8f105fcd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bountyHunterObject: {fileID: 258908918}
+  highway: {fileID: 1647396083}
+  carSpawner: {fileID: 1647396081}
+  whiteListedVehicles:
+  - {fileID: 11400000, guid: 77846376ea5b9354590a047d142769ad, type: 2}
+  - {fileID: 11400000, guid: 0f524298d99f8e24d814482d8ba7d8f8, type: 2}
+  - {fileID: 11400000, guid: e68ef28dbfae2094a812d7369d3614a8, type: 2}
+  randomVehicleColorOptions:
+  - color: {r: 1, g: 0, b: 0.9176221, a: 1}
+    percent: 1
+  activeBountyCount: 1
+  minBounty: 50
+  maxBounty: 100
+  currentBounties: []
+--- !u!4 &1184398034
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184398032}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1224167672
 GameObject:
   m_ObjectHideFlags: 0
@@ -20090,7 +20147,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1647396080 stripped
 GameObject:
@@ -20128,27 +20185,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20b768c7ac176d94dbe97db6453c500d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1647396084
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1647396080}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5594172a0a4e4a64380e73f8f105fcd1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bountyHunterObject: {fileID: 258908918}
-  highway: {fileID: 1647396083}
-  carSpawner: {fileID: 1647396081}
-  randomVehicleColorOptions:
-  - {r: 0, g: 0, b: 0, a: 1}
-  carTypes: 4
-  activeBountyCount: 1
-  minBounty: 50
-  maxBounty: 100
 --- !u!1 &1680728096
 GameObject:
   m_ObjectHideFlags: 0
@@ -22752,7 +22788,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1776125366
 GameObject:
@@ -26608,7 +26644,7 @@ RectTransform:
   - {fileID: 1412819637}
   - {fileID: 1224167673}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -29282,11 +29318,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 201615371714874447, guid: 0277dd08309978a409ad89038ed804b4,
         type: 3}
-      propertyPath: randomVehicleColorOptions.Array.size
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 201615371714874447, guid: 0277dd08309978a409ad89038ed804b4,
-        type: 3}
       propertyPath: randomVehicleColorOptions.Array.data[0].r
       value: 1
       objectReference: {fileID: 0}
@@ -30939,7 +30970,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6571424741107517577
 GameObject:

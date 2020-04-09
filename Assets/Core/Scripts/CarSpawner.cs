@@ -7,7 +7,7 @@ public class CarSpawner : MonoBehaviour
 
     [Tooltip("Will check speed and spawn traffic based on this driver (should implement AbstractDriver)")]
     public GameObject adjustTrafficTo;
-    private AbstractDriver adjustTrafficToDriver;
+    private AbstractDriver driverToAdjustTrafficTo;
 
     [Space(10), Tooltip("Max spawned vehicles at once")]
     public int trafficCount = 10;
@@ -16,6 +16,8 @@ public class CarSpawner : MonoBehaviour
     private float lastSpawn = float.MinValue;
     [Tooltip("No touchie")]
     public int currentSpawnedVehicleCount;
+
+    public Color[] randomVehicleColorOptions;
 
     [Tooltip("In m/s")]
     public float speedLimit = 27.78f;
@@ -45,10 +47,10 @@ public class CarSpawner : MonoBehaviour
     [Tooltip("rearSpawn1, rearSpawn2 .. rearSpawn(leftRoadLaneCount), frontSpawn1, frontSpawn2 .. frontSpawn(leftRoadLaneCount), target1, target2 .. target(leftRoadLaneCount)")]
     public Transform[] leftRoadPoints;
 
-    private void Start()
+    private void Awake()
     {
         botCars = PoolManager.GetPool("Bots");
-        adjustTrafficToDriver = adjustTrafficTo.GetComponent<AbstractDriver>();
+        driverToAdjustTrafficTo = adjustTrafficTo.GetComponent<AbstractDriver>();
     }
     private void Update()
     {
@@ -91,42 +93,75 @@ public class CarSpawner : MonoBehaviour
         {
             int index = Random.Range(0, halfRoadLaneCount * 2);
 
-            var roadPoints = rightRoadPoints;
+            bool spawnOnRight = true;
             if (index >= halfRoadLaneCount)
-                roadPoints = leftRoadPoints;
-
-            //Get vehicle speed relative to highway
-            float percentDirection = adjustTrafficToDriver.GetVehicle().vehicleRigidbody.velocity.normalized.PercentDirection(Vector3.forward);
-            float vehicleHighwaySpeed = adjustTrafficToDriver.GetVehicle().currentTotalSpeed * percentDirection;
-
-            //Switch spawn side depending on vehicle speed relative to highway
-            int offsetIndex = 0;
-            if (vehicleHighwaySpeed > speedLimit - maxLimitDeviation && index < halfRoadLaneCount)
-                offsetIndex = halfRoadLaneCount;
-            else if (vehicleHighwaySpeed < -speedLimit + maxLimitDeviation && index >= halfRoadLaneCount)
-                offsetIndex = halfRoadLaneCount;
+                spawnOnRight = false;
 
             //Spawn vehicle
             int wrappedIndex = index % halfRoadLaneCount;
-            Transform spawnPoint = roadPoints[offsetIndex + wrappedIndex];
-            float speed = Random.Range(speedLimit - maxLimitDeviation, speedLimit + maxLimitDeviation);
-            Transform[] targets = GetTargets(roadPoints, halfRoadLaneCount);
-            SpawnBot(spawnPoint, speed, targets, wrappedIndex);
-            currentSpawnedVehicleCount++;
-            lastSpawn = Time.time;
+            SpawnBot(spawnOnRight, wrappedIndex);
         }
     }
-    private void SpawnBot(Transform spawnPoint, float speed, Transform[] targets, int targetIndex)
+    public BotDriver SpawnBot(bool spawnOnRight, int spawnIndex, bool setRandomSpeed = true, float speed = 0, CarData carData = null)
     {
-        botCars.Get<BotDriver>((bot) =>
+        var roadPoints = rightRoadPoints;
+        if (!spawnOnRight)
+            roadPoints = leftRoadPoints;
+
+        //Get vehicle speed relative to highway
+        float vehicleToAdjustTrafficToHighwaySpeed = 0;
+        if (driverToAdjustTrafficTo != null)
         {
-            bot.RespawnRandomVehicle(spawnPoint, speed);
-            bot.GetVehicle().vehicleHealth.HealPercent(1);
-            bot.GetCarability().RandomizeLicense();
+            var vehicleToAdjustTrafficTo = driverToAdjustTrafficTo.GetVehicle();
+            if (vehicleToAdjustTrafficTo != null)
+            {
+                float percentDirection = vehicleToAdjustTrafficTo.vehicleRigidbody.velocity.normalized.PercentDirection(Vector3.forward);
+                vehicleToAdjustTrafficToHighwaySpeed = vehicleToAdjustTrafficTo.currentTotalSpeed * percentDirection;
+            }
+        }
+
+        //Switch spawn side depending on vehicle speed relative to highway
+        int offsetIndex = 0;
+        if (vehicleToAdjustTrafficToHighwaySpeed > speedLimit - maxLimitDeviation && spawnOnRight)
+            offsetIndex = halfRoadLaneCount;
+        else if (vehicleToAdjustTrafficToHighwaySpeed < -speedLimit + maxLimitDeviation && !spawnOnRight)
+            offsetIndex = halfRoadLaneCount;
+
+        Transform spawnPoint = roadPoints[offsetIndex + spawnIndex];
+        Transform[] targets = GetTargets(roadPoints, halfRoadLaneCount);
+
+        if (setRandomSpeed)
+            speed = Random.Range(speedLimit - maxLimitDeviation, speedLimit + maxLimitDeviation);
+
+        currentSpawnedVehicleCount++;
+        lastSpawn = Time.time;
+
+        return botCars.Get<BotDriver>((bot) =>
+        {
+            Color vehicleColor;
+
+            if (carData != null)
+            {
+                bot.Respawn(spawnPoint.position, spawnPoint.rotation, (int)carData.vehicleIndex, speed);
+                bot.GetCarability().license = carData.vehicleLicense;
+                vehicleColor = carData.vehicleColor;
+            }
+            else
+            {
+                bot.RespawnRandomVehicle(spawnPoint.position, spawnPoint.rotation, speed);
+                bot.GetCarability().RandomizeLicense();
+                vehicleColor = randomVehicleColorOptions[Random.Range(0, randomVehicleColorOptions.Length)];
+            }
+
+            var carAppearance = bot.GetCarAppearance();
+            if (carAppearance != null)
+                carAppearance.color = vehicleColor;
+
+            bot.GetVehicle().vehicleHealth.SetPercent(1);
             bot.GetCarHUD().showLicense = false;
             bot.GetCarHUD().showPointer = false;
             bot.targets = targets;
-            bot.currentTargetIndex = targetIndex;
+            bot.currentTargetIndex = spawnIndex;
             bot.onFall += Bot_onFall;
         });
     }

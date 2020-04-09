@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityHelpers;
 
 public class CarHUD : MonoBehaviour
 {
@@ -34,19 +35,28 @@ public class CarHUD : MonoBehaviour
 
     private void Reposition()
     {
-        hudTransform.position = self.GetVehicle().vehicleRigidbody.transform.position;
-        hudTransform.forward = Vector3.down;
-
-        if (showPointer || showLicense)
+        var currentVehicle = self.GetVehicle();
+        if (currentVehicle != null)
         {
-            GameObject lookAtTarget = GameObject.FindGameObjectWithTag("HighwayCam");
-            if (lookAtTarget)
-            {
-                hudTransform.LookAt(lookAtTarget.transform, lookAtTarget.transform.up);
-                hudTransform.forward = -hudTransform.forward;
-            }
-        }
+            hudTransform.position = currentVehicle.vehicleRigidbody.transform.position;
+            hudTransform.forward = Vector3.down;
 
-        hudTransform.position -= hudDistance * hudTransform.forward;
+            if (showPointer || showLicense)
+            {
+                GameObject cameraObject = GameObject.FindGameObjectWithTag("HighwayCam");
+                if (cameraObject != null)
+                {
+                    var orbitController = cameraObject.GetComponent<OrbitCameraController>();
+                    if (orbitController != null)
+                    {
+                        hudTransform.localRotation = Quaternion.Euler(orbitController.rightAngle, orbitController.upAngle, orbitController.forwardAngle);
+                        //hudTransform.LookAt(cameraObject.transform, cameraObject.transform.up);
+                        //hudTransform.forward = -hudTransform.forward;
+                    }
+                }
+            }
+
+            hudTransform.position -= hudDistance * hudTransform.forward;
+        }
     }
 }

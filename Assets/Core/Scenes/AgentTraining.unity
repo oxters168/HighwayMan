@@ -4620,7 +4620,7 @@ PrefabInstance:
     - target: {fileID: 1732982790862379618, guid: f48b9a44840e0944c828cc2b09c69881,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 21
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1732982791345961981, guid: f48b9a44840e0944c828cc2b09c69881,
         type: 3}
@@ -4670,7 +4670,7 @@ PrefabInstance:
     - target: {fileID: 1732982791724190597, guid: f48b9a44840e0944c828cc2b09c69881,
         type: 3}
       propertyPath: targetSpawnCenter.z
-      value: 200
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1732982791724190597, guid: f48b9a44840e0944c828cc2b09c69881,
         type: 3}
@@ -4683,11 +4683,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1732982792195631312, guid: f48b9a44840e0944c828cc2b09c69881,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1750524538259317497, guid: f48b9a44840e0944c828cc2b09c69881,
         type: 3}
       propertyPath: m_IsActive
       value: 0

@@ -12,7 +12,6 @@ public class CarAppearance : MonoBehaviour
         {
             affectedRenderer.material.color = color;
             prevColor = color;
-            Debug.Log("Changed color");
         }
     }
 }

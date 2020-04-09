@@ -39,8 +39,8 @@ public class HumanDriver : MonoBehaviour, AbstractDriver
     }
     public CarAppearance GetCarAppearance()
     {
-        return GetComponent<CarAppearance>();
-        //return vehicles.currentVehicle.GetComponentInParent<CarAppearance>();
+        //return GetComponent<CarAppearance>();
+        return vehicles.currentVehicle.GetComponent<CarAppearance>();
     }
     public CarHUD GetCarHUD()
     {

@@ -5,13 +5,6 @@ public class BotDriver : MonoBehaviour, AbstractDriver
 {
     public VehicleSwitcher vehicles;
     public Carability carability;
-    [Tooltip("Has to implement the interface AbstractDriver")]
-    public GameObject keepUpWithObject;
-    //private AbstractDriver keepUpWith;
-
-    //[Space(10)]
-    //public Transform frontSpawn;
-    //public Transform rearSpawn;
 
     [Space(10), Tooltip("The default target when respawned")]
     public int defaultTargetIndex;
@@ -37,20 +30,10 @@ public class BotDriver : MonoBehaviour, AbstractDriver
 
     public event FallenHandler onFall;
     public delegate void FallenHandler(BotDriver caller);
-
-    //private bool spawnedFromRear;
+    public bool fallen { get; private set; }
 
     private float spawnSpeed;
 
-    private void Awake()
-    {
-        //treeCollider.onTriggerEnter.AddListener(OnTreeTriggerEnter);
-    }
-    /*private void Start()
-    {
-        RespawnRandomVehicle();
-        keepUpWith = keepUpWithObject.GetComponent<AbstractDriver>();
-    }*/
     private void Update()
     {
         var currentVehicle = vehicles.currentVehicle;
@@ -61,17 +44,14 @@ public class BotDriver : MonoBehaviour, AbstractDriver
             TrySwitchTarget();
         }
     }
-    //private void OnTreeTriggerEnter(TreeCollider.CollisionInfo colInfo)
-    //{
-    //    if (!spawnedFromRear && colInfo.collidedWith.CompareTag("Rear") || spawnedFromRear && colInfo.collidedWith.CompareTag("Front"))
-    //        RespawnRandom();
-    //}
 
     private void RespawnCheck(CarPhysics currentVehicle)
     {
         if (currentVehicle.transform.position.y < -0.5f)
+        {
+            fallen = true;
             onFall?.Invoke(this);
-            //RespawnRandomVehicle();
+        }
     }
     private void Drive(CarPhysics currentVehicle)
     {
@@ -152,11 +132,11 @@ public class BotDriver : MonoBehaviour, AbstractDriver
         currentTargetIndex = nextTargetIndex;
     }
 
-    public void RespawnRandomVehicle(Transform spawnFrom, float speed)
+    public void RespawnRandomVehicle(Vector3 spawnPosition, Quaternion spawnRotation, float speed)
     {
-        Respawn(spawnFrom, Random.Range(0, vehicles.allVehicles.Length), speed);
+        Respawn(spawnPosition, spawnRotation, Random.Range(0, vehicles.allVehicles.Length), speed);
     }
-    public void Respawn(Transform spawnFrom, int vehicleIndex, float speed)
+    public void Respawn(Vector3 spawnPosition, Quaternion spawnRotation, int vehicleIndex, float speed)
     {
         currentTargetIndex = defaultTargetIndex;
 
@@ -165,20 +145,9 @@ public class BotDriver : MonoBehaviour, AbstractDriver
 
         spawnSpeed = speed;
 
-        //spawnedFromRear = true;
-        /*Transform spawnFrom = rearSpawn;
-        var followVehicle = keepUpWith?.GetVehicle();
-        if (followVehicle != null)
-        {
-            float keepUpDirection = Vector3.Dot(followVehicle.transform.forward, Vector3.forward);
-            float keepUpSpeed = followVehicle.currentForwardSpeed;
-            if ((keepUpDirection < 0 && keepUpSpeed > 0) || keepUpDirection > 0 && (keepUpSpeed < 0 || spawnSpeed < keepUpSpeed))
-            {
-                spawnFrom = frontSpawn;
-                //spawnedFromRear = false;
-            }
-        }*/
-        vehicles.currentVehicle.Teleport(spawnFrom.position, spawnFrom.rotation, spawnSpeed);
+        vehicles.currentVehicle.Teleport(spawnPosition, spawnRotation, spawnSpeed);
+
+        fallen = false;
     }
 
     public CarPhysics GetVehicle()
@@ -191,8 +160,8 @@ public class BotDriver : MonoBehaviour, AbstractDriver
     }
     public CarAppearance GetCarAppearance()
     {
-        return GetComponent<CarAppearance>();
-        //return vehicles.currentVehicle.GetComponentInParent<CarAppearance>();
+        //return GetComponent<CarAppearance>();
+        return vehicles.currentVehicle.GetComponent<CarAppearance>();
     }
     public CarHUD GetCarHUD()
     {

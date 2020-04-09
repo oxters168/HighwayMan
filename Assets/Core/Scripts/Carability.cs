@@ -38,10 +38,6 @@ public class Carability : MonoBehaviour
     private void Awake()
     {
         self = GetComponent<AbstractDriver>();
-    }
-    private void Start()
-    {
-        RandomizeLicense();
         sirenLights = GetComponentsInChildren<SirenLightController>(true);
     }
     private void Update()

@@ -16,7 +16,7 @@ public class VehicleSwitcher : MonoBehaviour
 
     public void SetVehicle(int vehicleIndex)
     {
-        index = Mathf.Clamp(vehicleIndex, 0, allVehicles.Length);
+        index = Mathf.Clamp(vehicleIndex, 0, allVehicles.Length - 1);
         if (allVehicles.Length > 0)
         {
             CarPhysics prevVehicle = null;

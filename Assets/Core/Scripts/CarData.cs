@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public struct CarData
+public class CarData
 {
-    public int vehicleIndex;
+    public uint vehicleIndex;
     public Color vehicleColor;
     public string vehicleLicense;
 }

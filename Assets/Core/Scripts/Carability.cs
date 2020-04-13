@@ -11,10 +11,13 @@ public class Carability : MonoBehaviour
 
     private readonly float[] scanDistances = new float[] { 15, 15, 25 };
     [Space(10)]
+    public EffectWrapper scanLineEffect;
+    public EffectWrapper scanSphereEffect;
     public bool scan;
     public int scanLevel;
     public float scansPerSecond = 0.25f;
     private float lastScan = float.MinValue;
+    public bool CanScan { get { return Time.time - lastScan >= (1 / scansPerSecond); } }
 
     private readonly float[] sirenDistances = new float[] { -1, 15, 30, 60 };
     [Space(10)]
@@ -27,6 +30,7 @@ public class Carability : MonoBehaviour
     private readonly float[] captureDistances = new float[] { 15, 30, 60, 75 };
     private readonly float[] captureTimes = new float[] { 8, 5, 3, 1 };
     [Space(10)]
+    public EffectWrapper captureEffect;
     public bool capture;
     public bool cycleNextTarget, cyclePreviousTarget;
     //private bool cycledTarget;
@@ -34,6 +38,10 @@ public class Carability : MonoBehaviour
     public int captureDistanceLevel;
     public int captureTimeLevel;
     private float startCaptureTime = -1;
+    public bool IsCapturing { get; private set; }
+
+    [Space(10)]
+    public float targettingDistance = 75;
 
     private void Awake()
     {
@@ -42,13 +50,53 @@ public class Carability : MonoBehaviour
     }
     private void Update()
     {
+        ManageEffects();
+
         LicenseScanner();
         Siren();
         SirenLights();
         CycleTargets();
-        Capture();
+        IsCapturing = Capture();
     }
 
+    private void ManageEffects()
+    {
+        Transform expectedParent = self.GetVehicle()?.transform;
+
+        #region Scan
+        EffectWrapper scanEffect = scanLineEffect;
+        Vector3 scanScale = new Vector3(0.5f, 0.5f, GetScanDistance());
+        if (scanLevel > 0)
+        {
+            scanEffect = scanSphereEffect;
+            scanScale = Vector3.one * GetScanDistance();
+            scanLineEffect?.SetShown(false);
+        }
+        else
+            scanSphereEffect?.SetShown(false);
+        if (scanEffect != null)
+        {
+            if (scanEffect.transform.parent != expectedParent)
+                scanEffect.transform.SetParent(expectedParent, false);
+
+            scanEffect.shownScale = scanScale;
+            scanEffect.SetShown(scan);
+            scanEffect.SetColor(CanScan ? Color.green : Color.red);
+        }
+        #endregion
+
+        #region Capture
+        if (captureEffect != null)
+        {
+            if (captureEffect.transform.parent != expectedParent)
+                captureEffect.transform.SetParent(expectedParent, false);
+
+            captureEffect.shownScale = Vector3.one * GetCaptureDistance();
+            captureEffect.SetShown(capture);
+            captureEffect.SetColor(IsCapturing ? Color.green : Color.red);
+        }
+        #endregion
+    }
     public void SetTarget(AbstractDriver target)
     {
         if (currentTarget != null)
@@ -71,8 +119,8 @@ public class Carability : MonoBehaviour
         {
             //cycledTarget = true;
 
-            int currentCaptureDistanceLevel = Mathf.Clamp(captureDistanceLevel, 0, captureDistances.Length - 1);
-            AbstractDriver[] surroundingDrivers = GetSurroundingDrivers(captureDistances[currentCaptureDistanceLevel]);
+            //int currentCaptureDistanceLevel = Mathf.Clamp(captureDistanceLevel, 0, captureDistances.Length - 1);
+            AbstractDriver[] surroundingDrivers = GetSurroundingDrivers(targettingDistance);
 
             if (surroundingDrivers != null && surroundingDrivers.Length > 0)
             {
@@ -110,7 +158,12 @@ public class Carability : MonoBehaviour
         //else if (!cycleNextTarget && !cyclePreviousTarget)
         //    cycledTarget = false;
     }
-    private void Capture()
+    public float GetCaptureDistance()
+    {
+        int currentCaptureDistanceLevel = Mathf.Clamp(captureDistanceLevel, 0, captureDistances.Length - 1);
+        return captureDistances[currentCaptureDistanceLevel];
+    }
+    private bool Capture()
     {
         bool isCapturing = false;
 
@@ -118,10 +171,10 @@ public class Carability : MonoBehaviour
         {
             if (currentTarget != null)
             {
-                float targetSqrDistance = (currentTarget.GetVehicle().vehicleRigidbody.transform.position - self.GetVehicle().vehicleRigidbody.transform.position).sqrMagnitude;
-                int currentCaptureDistanceLevel = Mathf.Clamp(captureDistanceLevel, 0, captureDistances.Length);
-                float maxDistanceSqr = captureDistances[currentCaptureDistanceLevel] * captureDistances[currentCaptureDistanceLevel];
-                if (targetSqrDistance <= maxDistanceSqr)
+                float targetDistance = (currentTarget.GetVehicle().vehicleRigidbody.transform.position - self.GetVehicle().vehicleRigidbody.transform.position).magnitude;
+                float captureDistance = GetCaptureDistance();
+                //float maxDistanceSqr = captureDistance * captureDistance;
+                if (targetDistance <= captureDistance / 2)
                 {
                     isCapturing = true;
 
@@ -140,6 +193,8 @@ public class Carability : MonoBehaviour
 
         if (!isCapturing)
             startCaptureTime = -1;
+
+        return isCapturing;
     }
     private void SirenLights()
     {
@@ -164,20 +219,24 @@ public class Carability : MonoBehaviour
             lastSirenScan = Time.time;
         }
     }
+    public float GetScanDistance()
+    {
+        int currentScanLevel = Mathf.Clamp(scanLevel, 0, scanDistances.Length - 1);
+        return scanDistances[currentScanLevel];
+    }
     private void LicenseScanner()
     {
-        if (scan && Time.time - lastScan >= (1 / scansPerSecond))
+        if (scan && CanScan)
         {
-            int currentScanLevel = Mathf.Clamp(scanLevel, 0, scanDistances.Length - 1);
-            float scanDistance = scanDistances[currentScanLevel];
-            if (currentScanLevel > 0)
+            float scanDistance = GetScanDistance();
+            if (scanLevel > 0)
             {
                 if (ScanSurroundingLicenses(scanDistance) > 0)
                     lastScan = Time.time;
             }
             else
                 if (ScanFrontLicense(scanDistance))
-                lastScan = Time.time;
+                    lastScan = Time.time;
         }
     }
 

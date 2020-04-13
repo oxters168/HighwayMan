@@ -60,6 +60,7 @@ GameObject:
   - component: {fileID: 66793349776943973}
   - component: {fileID: 66793349776943979}
   - component: {fileID: 66793349776943978}
+  - component: {fileID: 360098561867772182}
   m_Layer: 0
   m_Name: CarCamera
   m_TagString: Untagged
@@ -138,6 +139,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BlockSize: 12
   Shader: {fileID: 4800000, guid: 830bfccb218141b48b8bcf4756a3853f, type: 3}
+--- !u!114 &360098561867772182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66793349776943972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fce5ad3227848b499d31d71e3f0f779, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraMosaic: {fileID: 66793349776943978}
+  mosaicPercent: 0.012
 --- !u!1 &66793350270486121
 GameObject:
   m_ObjectHideFlags: 0

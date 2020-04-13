@@ -100,3 +100,6 @@ Assets/Gizmos/Doozy/*
 
 Assets/Imported/PolygonPrototype/*
 !Assets/Imported/PolygonPrototype/.gitkeep
+
+Assets/Imported/KriptoFX/MeshEffect/*
+!Assets/Imported/KriptoFX/MeshEffect/.gitkeep

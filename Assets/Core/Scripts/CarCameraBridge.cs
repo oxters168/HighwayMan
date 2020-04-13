@@ -12,15 +12,15 @@ public class CarCameraBridge : MonoBehaviour
 
     public OrbitCameraController followCamera;
     public GaugeController speedGauge;
-    //public TextMeshProUGUI speedGauge;
 
     [Space(10)]
-    public MosaicsPE cameraMosaic;
-    public float closeMosaicValue = 15, farMosaicValue = 5;
+    public MosaicResolutionAdjuster cameraMosaic;
+    public float closeMosaicPercent = 0.01f, farMosaicPercent = 0f;
     [Space(10)]
     public float orthoMinSize = 10;
     public float orthoMaxSize = 50;
     public float orthoLerp = 5;
+    public float orthoPercent { get; private set; }
     [Space(10)]
     public bool rotateWithVehicle;
     public float rightAngle;
@@ -37,8 +37,9 @@ public class CarCameraBridge : MonoBehaviour
             var camerasCamera = followCamera.GetComponent<Camera>();
             float lerpedOrtho = Mathf.Lerp(camerasCamera.orthographicSize, Mathf.Lerp(orthoMinSize, orthoMaxSize, speedPercent), Time.deltaTime * orthoLerp);
             camerasCamera.orthographicSize = lerpedOrtho;
-            float orthoPercent = (lerpedOrtho - orthoMinSize) / (orthoMaxSize - orthoMinSize);
-            cameraMosaic.BlockSize = Mathf.Lerp(closeMosaicValue, farMosaicValue, orthoPercent);
+            orthoPercent = (lerpedOrtho - orthoMinSize) / (orthoMaxSize - orthoMinSize);
+
+            cameraMosaic.mosaicPercent = Mathf.Lerp(closeMosaicPercent, farMosaicPercent, orthoPercent);
 
             followCamera.target = vehicle.transform;
             followCamera.rightAngle = rightAngle;
@@ -50,7 +51,6 @@ public class CarCameraBridge : MonoBehaviour
                 int diff = Mathf.CeilToInt(rawDiff / 10) * 10;
                 speedGauge.markDiff = diff;
                 speedGauge.value = Mathf.Abs(vehicle.GetSpeedInKMH()) / speedGauge.lastMarkValue;
-                //speedGauge.text = MathHelpers.SetDecimalPlaces(vehicle.GetSpeedInKMH(), 2).ToString();
             }
         }
     }

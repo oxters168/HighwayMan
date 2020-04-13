@@ -7,6 +7,8 @@ public class CarHUD : MonoBehaviour
     private AbstractDriver self;
 
     public Transform hudTransform;
+    public Vector3 closeScale = new Vector3(0.01f, 0.01f, 0.01f);
+    public Vector3 farScale = new Vector3(0.03f, 0.03f, 0.03f);
 
     //public Transform lookAtTarget;
     public float hudDistance = 5;
@@ -18,12 +20,19 @@ public class CarHUD : MonoBehaviour
     public GameObject license;
     public TextMeshProUGUI licenseLabel;
 
+    private CarCameraBridge cameraBridge;
+
     private void Awake()
     {
         self = GetComponent<AbstractDriver>();
     }
     void Update()
     {
+        if (cameraBridge == null)
+            cameraBridge = GameObject.FindGameObjectWithTag("HighwayCam")?.GetComponent<CarCameraBridge>();
+        if (cameraBridge != null)
+            hudTransform.localScale = Vector3.Lerp(closeScale, farScale, cameraBridge.orthoPercent);
+
         Reposition();
 
         if (showLicense)

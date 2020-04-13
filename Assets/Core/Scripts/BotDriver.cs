@@ -76,7 +76,52 @@ public class BotDriver : MonoBehaviour, AbstractDriver
 
         //Calculating gas value to conform to set speed
         float nextGas = currentVehicle.currentForwardSpeed < spawnSpeed ? 1 : 0;
+        float nextBrake = 0;
 
+        AvoidObstacles(currentVehicle, ref nextGas, ref nextSteer, ref nextBrake, maxSteer);
+
+        //Apply values to car
+        currentVehicle.gas = nextGas;
+        currentVehicle.steer = nextSteer;
+        currentVehicle.brake = nextBrake;
+    }
+    private static void AvoidObstacles(CarPhysics currentVehicle, ref float nextGas, ref float nextSteer, ref float nextBrake, float maxSteer = 0.2f)
+    {
+        var forwardHitInfo = currentVehicle.GetForwardHitInfo();
+        var leftHitInfo = currentVehicle.GetLeftHitInfo();
+        var rightHitInfo = currentVehicle.GetRightHitInfo();
+        var rearHitInfo = currentVehicle.GetRearHitInfo();
+        if (forwardHitInfo.hit)
+        {
+            if (forwardHitInfo.info.distance <= 5)
+            {
+                nextGas = -1;
+                nextSteer = leftHitInfo.info.distance < rightHitInfo.info.distance ? -1 : 1;
+            }
+            else if (currentVehicle.currentForwardSpeed > 5)
+                nextBrake = 1;
+        }
+        else if (rearHitInfo.hit)
+        {
+            if (rearHitInfo.info.distance <= 5)
+            {
+                nextGas = 1;
+                nextSteer = leftHitInfo.info.distance < rightHitInfo.info.distance ? 1 : -1;
+            }
+            else if (currentVehicle.currentForwardSpeed < -5)
+                nextBrake = 1;
+        }
+        else if (leftHitInfo.hit && leftHitInfo.info.distance <= 1)
+        {
+            nextSteer = maxSteer;
+        }
+        else if (rightHitInfo.hit && rightHitInfo.info.distance <= 1)
+        {
+            nextSteer = -maxSteer;
+        }
+    }
+    /*private static void AvoidObstacles(CarPhysics currentVehicle, ref float nextGas, ref float nextSteer)
+    {
         var forwardHitInfo = currentVehicle.GetForwardHitInfo();
         var leftHitInfo = currentVehicle.GetLeftHitInfo();
         var rightHitInfo = currentVehicle.GetRightHitInfo();
@@ -105,11 +150,8 @@ public class BotDriver : MonoBehaviour, AbstractDriver
             else if (rightHitInfo.hit && currentVehicle.currentForwardSpeed > 0 || leftHitInfo.hit && currentVehicle.currentForwardSpeed < 0)
                 nextSteer = -1;
         }
+    }*/
 
-        //Apply values to car
-        currentVehicle.gas = nextGas;
-        currentVehicle.steer = nextSteer;
-    }
     private void TrySwitchTarget()
     {
         if (Time.time - lastTargetSwitchTime >= targetSwitchTime)

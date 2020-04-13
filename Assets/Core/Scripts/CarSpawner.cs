@@ -18,6 +18,7 @@ public class CarSpawner : MonoBehaviour
     [Tooltip("No touchie")]
     public int currentSpawnedVehicleCount;
 
+    public CarStats[] whiteListedVehicles;
     public ColorPercentage[] randomVehicleColorOptions;
 
     [Tooltip("In m/s")]
@@ -96,19 +97,22 @@ public class CarSpawner : MonoBehaviour
         return BotCars.Get<BotDriver>((bot) =>
         {
             Color vehicleColor;
+            int vehicleIndex;
 
             if (carData != null)
             {
-                bot.Respawn(spawnPoint.position, spawnPoint.rotation, (int)carData.vehicleIndex, speed);
+                vehicleIndex = (int)carData.vehicleIndex;
                 bot.GetCarability().license = carData.vehicleLicense;
                 vehicleColor = carData.vehicleColor;
             }
             else
             {
-                bot.RespawnRandomVehicle(spawnPoint.position, spawnPoint.rotation, speed);
+                vehicleIndex = whiteListedVehicles[Random.Range(0, whiteListedVehicles.Length)].index;
                 bot.GetCarability().RandomizeLicense();
                 vehicleColor = ColorPercentage.PickColor(randomVehicleColorOptions).color;
             }
+
+            bot.Respawn(spawnPoint.position, spawnPoint.rotation, vehicleIndex, speed);
 
             var carAppearance = bot.GetCarAppearance();
             if (carAppearance != null)

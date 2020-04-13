@@ -48,17 +48,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   license: 
+  scanEffect: {fileID: 0}
   scan: 0
   scanLevel: 0
   scansPerSecond: 0.25
   siren: 0
   sirenLevel: 0
   sirenScansPerSecond: 0.25
+  captureEffect: {fileID: 0}
   capture: 0
   cycleNextTarget: 0
   cyclePreviousTarget: 0
   captureDistanceLevel: 0
   captureTimeLevel: 0
+  targettingDistance: 75
 --- !u!114 &1166930858805102131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96,6 +99,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hudTransform: {fileID: 7724085187962667569}
+  closeScale: {x: 0.01, y: 0.01, z: 0.01}
+  farScale: {x: 0.03, y: 0.03, z: 0.03}
   hudDistance: 5
   showPointer: 0
   pointer: {fileID: 257520900222596355}

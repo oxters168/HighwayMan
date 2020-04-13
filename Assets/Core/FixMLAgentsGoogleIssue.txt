@@ -1,0 +1,7 @@
+In Unity, go to Packages -> Barracuda -> Barracuda -> Plugins -> ProtoBuffer
+Right click and open in explorer
+Edit Google.Protobuf.dll.meta in notepad
+Set exclude 1s to 0s
+Set enabled 0s to 1s
+Save and go back to Unity
+Right click on the first Barracuda under Packages and press reimport

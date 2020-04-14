@@ -116,7 +116,10 @@ public class CarSpawner : MonoBehaviour
 
             var carAppearance = bot.GetCarAppearance();
             if (carAppearance != null)
+            {
+                carAppearance.showSiren = false;
                 carAppearance.color = vehicleColor;
+            }
 
             bot.GetVehicle().vehicleHealth.SetPercent(1);
             bot.GetCarHUD().showLicense = false;

@@ -3,6 +3,8 @@ using UnityHelpers;
 
 public class BountyTracker : MonoBehaviour
 {
+    public static BountyTracker bountyTrackerInScene;
+
     [Tooltip("An object that has Abstract Driver attached")]
     public GameObject bountyHunterObject;
     private AbstractDriver bountyHunter;
@@ -17,8 +19,10 @@ public class BountyTracker : MonoBehaviour
 
     public BountyData[] currentBounties;
 
-    void Start()
+    void Awake()
     {
+        bountyTrackerInScene = this;
+
         bountyHunter = bountyHunterObject.GetComponent<AbstractDriver>();
 
         currentBounties = new BountyData[activeBountyCount];
@@ -59,6 +63,8 @@ public class BountyTracker : MonoBehaviour
         if (bountyIndex >= 0)
         {
             value = (int)currentBounties[bountyIndex].reward;
+            currentBounties[bountyIndex].caught = true;
+            currentBounties[bountyIndex].driver.GetVehicle().Teleport(Vector3.up * -5, Quaternion.identity);
             currentBounties[bountyIndex] = GenerateRandomBounty();
         }
         return value;
@@ -112,6 +118,7 @@ public class BountyTracker : MonoBehaviour
 public class BountyData
 {
     public bool isSpooked;
+    public bool caught;
     public CarData carData;
     public uint reward;
     public bool headingNorth;

@@ -169,12 +169,11 @@ public class Carability : MonoBehaviour
 
         if (capture)
         {
+            //There's a bug where you can capture unspawned vehicles, should probably check if active in heirarchy. Needs more testing
             if (currentTarget != null)
             {
                 float targetDistance = (currentTarget.GetVehicle().vehicleRigidbody.transform.position - self.GetVehicle().vehicleRigidbody.transform.position).magnitude;
-                float captureDistance = GetCaptureDistance();
-                //float maxDistanceSqr = captureDistance * captureDistance;
-                if (targetDistance <= captureDistance / 2)
+                if (targetDistance <= GetCaptureDistance() / 2)
                 {
                     isCapturing = true;
 
@@ -184,6 +183,7 @@ public class Carability : MonoBehaviour
                     int currentCaptureTimeLevel = Mathf.Clamp(captureTimeLevel, 0, captureTimes.Length - 1);
                     if (Time.time - startCaptureTime >= captureTimes[currentCaptureTimeLevel])
                     {
+                        BountyTracker.bountyTrackerInScene.Catch(currentTarget.GetCarability().license);
                         Debug.Log("Captured " + currentTarget.GetCarability().license); //Caught
                         isCapturing = false;
                     }

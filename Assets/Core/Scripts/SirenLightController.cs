@@ -2,6 +2,7 @@
 
 public class SirenLightController : MonoBehaviour
 {
+    public Light sirenLight;
     public Renderer sirenRenderer;
     public string shaderColorName = "_Color";
     public string shaderEmissionColorName = "_EmissionColor";
@@ -29,20 +30,18 @@ public class SirenLightController : MonoBehaviour
 
     void Update()
     {
-        if (onOff)
-        {
-            float deltaValue = Time.deltaTime / -offTime;
-            if (turningOn)
-                deltaValue = Time.deltaTime / onTime;
+        float deltaValue = Time.deltaTime / -offTime;
+        if (onOff && turningOn)
+            deltaValue = Time.deltaTime / onTime;
+        value += deltaValue;
+        if (value >= 1)
+            turningOn = false;
+        else if (value <= 0)
+            turningOn = true;
+        value = Mathf.Clamp01(value);
 
-            value += deltaValue;
-            if (value >= 1)
-                turningOn = false;
-            else if (value <= 0)
-                turningOn = true;
-            value = Mathf.Clamp01(value);
-        }
-
+        if (sirenLight != null)
+            sirenLight.intensity = value;
         if (sirenRenderer != null)
         {
             errored = false;

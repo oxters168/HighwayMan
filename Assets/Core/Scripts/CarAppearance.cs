@@ -6,6 +6,9 @@ public class CarAppearance : MonoBehaviour
     private Color prevColor = Color.white;
     public Renderer affectedRenderer;
 
+    public bool showSiren;
+    public GameObject sirensParent;
+
     private void Update()
     {
         if (color != prevColor)
@@ -13,6 +16,9 @@ public class CarAppearance : MonoBehaviour
             affectedRenderer.material.color = color;
             prevColor = color;
         }
+
+        if (sirensParent != null)
+            sirensParent.SetActive(showSiren);
     }
 }
 

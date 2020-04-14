@@ -22,7 +22,8 @@ public class HumanDriver : MonoBehaviour, AbstractDriver
             vehicles.currentVehicle.steer = player.GetAxis("Steer");
 
             carability.scan = player.GetButton("Scan");
-            carability.siren = player.GetButton("Siren");
+            if (player.GetButtonDown("Siren"))
+                carability.siren = !carability.siren;
             carability.capture = player.GetButton("Capture");
             carability.cycleNextTarget = player.GetButtonDown("CycleNext") || player.GetButtonShortPress("CycleNext");
             carability.cyclePreviousTarget = player.GetButtonDown("CyclePrev") || player.GetButtonShortPress("CyclePrev");

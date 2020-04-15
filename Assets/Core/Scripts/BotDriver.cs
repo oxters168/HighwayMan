@@ -209,4 +209,8 @@ public class BotDriver : MonoBehaviour, AbstractDriver
     {
         return GetComponent<CarHUD>();
     }
+    public VehicleSwitcher GetVehicleSwitcher()
+    {
+        return vehicles;
+    }
 }

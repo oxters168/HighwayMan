@@ -8,10 +8,12 @@ public class PoliceStation : MonoBehaviour
     private List<BountyOption> shownBounties = new List<BountyOption>();
 
     public VehicleSwitcher viewedVehicle;
+    public CarStats defaultShownVehicle;
 
     void Awake()
     {
         bountyOptionsPool = PoolManager.GetPool("BountyOptions");
+        ShowDefaultVehicle();
     }
 
     void Update()
@@ -24,13 +26,22 @@ public class PoliceStation : MonoBehaviour
 
     private void ViewBountyPressed(BountyOption sender)
     {
-        viewedVehicle.SetVehicle((int)sender.bounty.carData.vehicleIndex);
+        ShowVehicle((int)sender.bounty.carData.vehicleIndex, sender.bounty.carData.vehicleColor);
+    }
+
+    public void ShowVehicle(int index, Color color)
+    {
+        viewedVehicle.SetVehicle(index);
         var carAppearance = viewedVehicle.currentVehicle.GetComponentInParent<CarAppearance>();
         if (carAppearance != null)
         {
-            carAppearance.color = sender.bounty.carData.vehicleColor;
+            carAppearance.color = color;
             carAppearance.showSiren = false;
         }
+    }
+    public void ShowDefaultVehicle()
+    {
+        ShowVehicle(defaultShownVehicle.index, Color.white);
     }
 
     private void ClearCaughtBounties()
@@ -93,6 +104,7 @@ public class PoliceStation : MonoBehaviour
         {
             var currentBounty = currentBounties[i];
             var bountyOption = bountyOptionsPool.Get<BountyOption>();
+            bountyOption.priceLabel.text = "$" + currentBounty.reward;
             bountyOption.bounty = currentBounty;
             bountyOption.viewButton.onClick.AddListener(() => { ViewBountyPressed(bountyOption); });
             shownBounties.Add(bountyOption);

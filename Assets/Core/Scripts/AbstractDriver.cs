@@ -6,4 +6,5 @@ public interface AbstractDriver
     Carability GetCarability();
     CarAppearance GetCarAppearance();
     CarHUD GetCarHUD();
+    VehicleSwitcher GetVehicleSwitcher();
 }

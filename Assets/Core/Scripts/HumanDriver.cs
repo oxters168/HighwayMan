@@ -47,4 +47,8 @@ public class HumanDriver : MonoBehaviour, AbstractDriver
     {
         return GetComponent<CarHUD>();
     }
+    public VehicleSwitcher GetVehicleSwitcher()
+    {
+        return vehicles;
+    }
 }

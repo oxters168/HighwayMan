@@ -335,4 +335,8 @@ public class AgentDriver : Agent, AbstractDriver
     {
         return GetComponent<CarHUD>();
     }
+    public VehicleSwitcher GetVehicleSwitcher()
+    {
+        return vehicles;
+    }
 }

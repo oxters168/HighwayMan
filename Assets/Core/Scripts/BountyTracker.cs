@@ -65,9 +65,24 @@ public class BountyTracker : MonoBehaviour
             value = (int)currentBounties[bountyIndex].reward;
             currentBounties[bountyIndex].caught = true;
             currentBounties[bountyIndex].driver.GetVehicle().Teleport(Vector3.up * -5, Quaternion.identity);
-            currentBounties[bountyIndex] = GenerateRandomBounty();
+            ReplaceBounty(bountyIndex);
         }
         return value;
+    }
+    public void ReplaceBounty(string license)
+    {
+        ReplaceBounty(GetBountyIndex(license));
+    }
+    public void ReplaceBounty(BountyData bounty)
+    {
+        ReplaceBounty(GetBountyIndex(bounty));
+    }
+    private void ReplaceBounty(int index)
+    {
+        if (index >= 0 && index < currentBounties.Length)
+            currentBounties[index] = GenerateRandomBounty();
+        else
+            Debug.LogError("BountyTracker: Could not replace bounty, given index is invalid");
     }
     public bool HasBounty(string license)
     {
@@ -85,6 +100,10 @@ public class BountyTracker : MonoBehaviour
             }
 
         return index;
+    }
+    private int GetBountyIndex(BountyData bounty)
+    {
+        return System.Array.IndexOf(currentBounties, bounty);
     }
 
     private BountyData GenerateRandomBounty()

@@ -7,6 +7,8 @@ public class Garage : MonoBehaviour
     public GameObject modifyingDriver;
     private AbstractDriver modifying;
 
+    public GameObject lockedImage;
+
     public VehicleSwitcher shownVehicles;
     public CarStats[] whitelist;
     private int currentWhitelistIndex;
@@ -14,6 +16,10 @@ public class Garage : MonoBehaviour
     private void Start()
     {
         modifying = modifyingDriver.GetComponent<AbstractDriver>();
+    }
+    void Update()
+    {
+        lockedImage.SetActive(!PlayerData.playerDataInScene.unlockedVehicles.Exists((carData) => { return carData.vehicleIndex == whitelist[currentWhitelistIndex].index; }));
     }
 
     public void SetModifyingToShown()

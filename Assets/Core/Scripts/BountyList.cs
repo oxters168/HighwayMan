@@ -133,10 +133,13 @@ public class BountyList : MonoBehaviour
         return optionInList;
     }
 
-    public void AddBountyOption(BountyData bounty)
+    public void AddBountyOption(BountyData bounty, AbstractDriver bountyHunter)
     {
             var bountyOption = bountyOptionsPool.Get<BountyOption>();
             bountyOption.bounty = bounty;
+            bountyOption.compassRelativeTo = bountyHunter;
+            bountyOption.vehicles = viewedVehicle;
+            //Debug.Log("Vehicle switcher being set is null: " + (viewedVehicle == null));
             bountyOption.viewButton.onClick.AddListener(() => { ViewBountyPressed(bountyOption); });
             shownBounties.Add(bountyOption);
     }

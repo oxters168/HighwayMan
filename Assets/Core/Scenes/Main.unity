@@ -563,7 +563,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &93120467
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9436,10 +9436,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c4617cbebc8f8044b5eccbdb7cbe83f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bountyHunterObject: {fileID: 258908918}
   stationBountyList: {fileID: 5821680566940515208}
-  stationShownOptions: 3
+  stationShownOptions: 19
   acceptedBountyList: {fileID: 1879830107}
-  acceptedShownOptions: 6
+  acceptedShownOptions: 30
 --- !u!1 &663068187
 GameObject:
   m_ObjectHideFlags: 0
@@ -32002,6 +32003,11 @@ PrefabInstance:
       propertyPath: bountyOptionsPoolName
       value: BountyOptionsOnScreen
       objectReference: {fileID: 0}
+    - target: {fileID: 5447095131115876741, guid: cbf9ecf48f8e3964e852baff3ebe8fc6,
+        type: 3}
+      propertyPath: viewedVehicle
+      value: 
+      objectReference: {fileID: 2047904359}
     - target: {fileID: 5821680566912085550, guid: cbf9ecf48f8e3964e852baff3ebe8fc6,
         type: 3}
       propertyPath: m_AnchorMax.x

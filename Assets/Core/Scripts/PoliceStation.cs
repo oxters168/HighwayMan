@@ -2,11 +2,18 @@
 
 public class PoliceStation : MonoBehaviour
 {
+    public GameObject bountyHunterObject;
+    private AbstractDriver bountyHunter;
+
     public BountyList stationBountyList;
     public BountyOption.Options stationShownOptions;
     public BountyList acceptedBountyList;
     public BountyOption.Options acceptedShownOptions;
 
+    void Start()
+    {
+        bountyHunter = bountyHunterObject.GetComponent<AbstractDriver>();
+    }
     void Update()
     {
         if (!stationBountyList.HasAnyBountyOnBoard())
@@ -41,7 +48,7 @@ public class PoliceStation : MonoBehaviour
         if (currentlySelected != null)
         {
             if (!acceptedBountyList.HasBounty(currentlySelected.bounty))
-                acceptedBountyList.AddBountyOption(currentlySelected.bounty);
+                acceptedBountyList.AddBountyOption(currentlySelected.bounty, bountyHunter);
             else
                 Debug.LogWarning("PoliceStation: Cannot accept already accepted bounty");
         }
@@ -71,7 +78,7 @@ public class PoliceStation : MonoBehaviour
         for (int i = 0; i < currentBounties.Length; i++)
         {
             var currentBounty = currentBounties[i];
-            stationBountyList.AddBountyOption(currentBounty);
+            stationBountyList.AddBountyOption(currentBounty, bountyHunter);
         }
     }
 }

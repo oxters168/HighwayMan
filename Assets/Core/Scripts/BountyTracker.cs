@@ -123,11 +123,11 @@ public class BountyTracker : MonoBehaviour
         };
     }
 
-    private float GetMinDistance()
+    public float GetMinDistance()
     {
         return highway.size / 2;
     }
-    private float GetMaxDistance()
+    public float GetMaxDistance()
     {
         return highway.size * 5;
     }

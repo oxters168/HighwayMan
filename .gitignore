@@ -71,8 +71,8 @@ Assets/Imported/MeshCombineStudio/*
 Assets/TextMesh Pro/*
 !Assets/TextMesh Pro/.gitkeep
 
-Assets/VehiclePhysics/*
-!Assets/VehiclePhysics/.gitkeep
+Assets/Imported/NWH Vehicle Physics 2/*
+!Assets/Imported/NWH Vehicle Physics 2/.gitkeep
 
 Assets/Rewired/*
 !Assets/Rewired/.gitkeep

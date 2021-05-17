@@ -77,9 +77,6 @@ Assets/Imported/NWH Vehicle Physics 2/*
 Assets/Rewired/*
 !Assets/Rewired/.gitkeep
 
-Assets/ML-Agents/*
-!Assets/ML-Agents/.gitkeep
-
 Assets/FastNoise Unity/*
 !Assets/FastNoise Unity/.gitkeep
 

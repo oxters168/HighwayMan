@@ -57,7 +57,7 @@ public class BotDriver : MonoBehaviour, AbstractDriver
     {
         //Calculate steer value to reach target
         float nextSteer = 0;
-        Vector3 vehicleFrontPoint = currentVehicle.GetPointOnBoundsBorder(0, -0.5f, 0.9f);
+        Vector3 vehicleFrontPoint = currentVehicle.vehicleRigidbody.transform.GetPointInBounds(new Vector3(0, -0.5f, 0.9f));
         Vector3 hypotenuse = targets[currentTargetIndex].position - vehicleFrontPoint;
         float targetAngle = Vector3.SignedAngle(hypotenuse.normalized, targets[currentTargetIndex].forward, currentVehicle.transform.up);
         float vehicleAngle = -Vector3.SignedAngle(currentVehicle.transform.forward, hypotenuse.normalized, currentVehicle.transform.up);

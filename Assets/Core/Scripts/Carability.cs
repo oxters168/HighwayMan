@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityHelpers;
 
 public class Carability : MonoBehaviour
 {
@@ -278,7 +279,7 @@ public class Carability : MonoBehaviour
     public AbstractDriver GetDriverInFront(float distance = 15)
     {
         AbstractDriver driver = null;
-        Vector3 centerPoint = self.GetVehicle().GetPointOnBoundsBorder(0, 0, 0);
+        Vector3 centerPoint = self.GetVehicle().vehicleRigidbody.transform.GetPointInBounds(Vector3.zero);
         RaycastHit hitInfo;
         if (Physics.Raycast(centerPoint, self.GetVehicle().vehicleRigidbody.transform.forward, out hitInfo, distance))
         {

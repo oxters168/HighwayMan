@@ -10,8 +10,26 @@ public class RealCarPhysics : MonoBehaviour
     /// </summary>
     private Rigidbody CarBody { get { if (_carBody == null) _carBody = GetComponentInChildren<Rigidbody>(); return _carBody; } }
 
+    [Tooltip("In meters per second")]
     public float maxSpeed = 20;
+    [Tooltip("In meters per second squared")]
     public float acceleration = 0.1f;
+    [Tooltip("In degrees per second")]
+    public float maxTurnRate = 1;
+    [Tooltip("The x-axis represents current speed and the y-axis represents turning rate (both normalized to their max)")]
+    /// <summary>
+    /// The x-axis represents current speed and the y-axis represents turning rate (both normalized to their max)
+    /// </summary>
+    public AnimationCurve handlingCurve = new AnimationCurve(new Keyframe(0, 0, 0, 10), new Keyframe(0.05f, 1), new Keyframe(1, 1));
+    [Tooltip("The x-axis represents current velocity and the y-axis represents how much friction to be applied (both axes are normalized to their max)")]
+    /// <summary>
+    /// The x-axis represents current velocity and the y-axis represents how much friction to be applied (both axes are normalized to their max)
+    /// </summary>
+    public AnimationCurve frictionCurve = AnimationCurve.Linear(0, 1, 1, 0.8f);
+
+    [Space(10)]
+    public float gas;
+    public float steer;
 
     [Space(10), Tooltip("The minimum distance the pod keeps itself floating above the ground (in meters)")]
     public float minGroundDistance = 1;
@@ -25,10 +43,6 @@ public class RealCarPhysics : MonoBehaviour
     public float antigravityFalloffDistance = 20;
     public AnimationCurve antigravityFalloffCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
-    /// <summary>
-    /// The x-axis represents current velocity and the y-axis represents how much friction to be applied (both axes are normalized to max speed and max friction)
-    /// </summary>
-    public AnimationCurve frictionCurve = AnimationCurve.Linear(0, 1, 1, 0.8f);
 
 
     [Space(10), Tooltip("The maximum torque the pod can apply to fix its orientation (in newton meters)")]
@@ -46,7 +60,7 @@ public class RealCarPhysics : MonoBehaviour
     /// <summary>
     /// The orientation the pod should be, calculated from the the up averaged from the surrounding face normals and the forward based on that up and the transform's forward
     /// </summary>
-    private Quaternion castedOrientation;
+    private Quaternion castedOrientation { get { return Quaternion.LookRotation(forward, up); } }
     /// <summary>
     /// The up direction the pod should be
     /// </summary>
@@ -79,19 +93,36 @@ public class RealCarPhysics : MonoBehaviour
         vehicleBounds = transform.GetTotalBounds(Space.World);
 
         CalculateOrientationFromSurroundings();
+
+        if (control)
+        {
+            if (Input.GetKey(KeyCode.W))
+                gas = 1;
+            else if (Input.GetKey(KeyCode.S))
+                gas = -1;
+            else
+                gas = 0;
+
+            if (Input.GetKey(KeyCode.D))
+                steer = 1;
+            else if (Input.GetKey(KeyCode.A))
+                steer = -1;
+            else
+                steer = 0;
+        }
+
+        float currentForwardVelocity = Vector3.Dot(CarBody.velocity, forward);
+        if (gas > float.Epsilon || gas < -float.Epsilon)
+            CarBody.AddForce(PhysicsHelpers.CalculateRequiredForceForSpeed(CarBody.mass, currentForwardVelocity, Mathf.Clamp(currentForwardVelocity + gas * acceleration, -maxSpeed, maxSpeed)) * forward, ForceMode.Force);
+        
+        float handlingMultiplier = handlingCurve.Evaluate(Mathf.Abs(currentForwardVelocity) / maxSpeed);
+        if (steer > float.Epsilon || steer < -float.Epsilon)
+            forward = Quaternion.AngleAxis(steer * maxTurnRate * handlingMultiplier * Mathf.Sign(currentForwardVelocity), up) * forward;
+
         ApplyFloatation();
         ApplyOrientator();
 
         ApplyFriction();
-
-        if (control)
-        {
-            float currentForwardVelocity = Vector3.Dot(CarBody.velocity, forward);
-            if (Input.GetKey(KeyCode.W))
-                CarBody.AddForce(PhysicsHelpers.CalculateRequiredForceForSpeed(CarBody.mass, currentForwardVelocity, Mathf.Clamp(currentForwardVelocity + acceleration, -maxSpeed, maxSpeed)) * forward, ForceMode.Force);
-            if (Input.GetKey(KeyCode.S))
-                CarBody.AddForce(PhysicsHelpers.CalculateRequiredForceForSpeed(CarBody.mass, currentForwardVelocity, Mathf.Clamp(currentForwardVelocity - acceleration, -maxSpeed, maxSpeed)) * forward, ForceMode.Force);
-        }
     }
 
     private void CalculateOrientationFromSurroundings()
@@ -105,7 +136,6 @@ public class RealCarPhysics : MonoBehaviour
         up = Vector3.Lerp(up, nextUp, Time.fixedDeltaTime * 5);
         forward = Vector3.ProjectOnPlane(transform.forward, up).normalized;
         right = Quaternion.AngleAxis(90, up) * forward;
-        castedOrientation = Quaternion.LookRotation(forward, up);
 
         if (showCalculatedUp)
             Debug.DrawRay(vehicleBounds.center, up * 5, Color.green);

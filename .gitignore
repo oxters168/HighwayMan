@@ -100,3 +100,9 @@ Assets/Imported/PolygonPrototype/*
 
 Assets/Imported/KriptoFX/MeshEffect/*
 !Assets/Imported/KriptoFX/MeshEffect/.gitkeep
+
+Assets/EasyRoads3D/*
+!Assets/EasyRoads3D/.gitkeep
+
+Assets/Fullscreen/*
+!Assets/Fullscreen/.gitkeep
